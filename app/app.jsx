@@ -4,7 +4,7 @@ import { Router } from 'react-router-dom';
 import Main from './components/Main.jsx';
 import history from './history.js';
 
-if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+if (/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
     render((
         <Router history={history}>
             <Main />
