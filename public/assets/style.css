@@ -357,7 +357,7 @@ input[type=date]::-webkit-inner-spin-button {
     right: 0;
     left: 0;
     z-index: 999;
-    background-color: white;
+    background-color: grey;
 }
 
 .fixed-logo .img-container{
