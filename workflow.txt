@@ -1,0 +1,37 @@
+1. Landing page:
+- web app asks for permission to view location
+- after permission is granted, user can see any active mesh networks in their area
+
+Now, users have the following two options:
+2. Join any one of the available active mesh networks
+Or
+3. Create a new mesh by clicking the plus ‘+’ button at the bottom of the page
+
+
+2. Joining a mesh
+- click on an active mesh network
+- for new users: redirects to LinkedIn auth page. User completes LinkedIn auth and is redirected by back. Now user is in the mesh network
+- for returning users: directly taken into the mesh network using cookies
+
+Inside the mesh network:
+- all users view all participants’ LinkedIn profile pic, name, headline, link to LinkedIn profile (hyperlink on LinkedIn logo image under each name) in a form of a one column table
+
+3. Creating a mesh:
+- user clicks the + button
+- for new users: redirects to LinkedIn auth page. User completes LinkedIn auth and is redirected by back. Now user is taken to creating mesh form page.
+- for returning users: directly taken into creating mesh form page using cookies
+
+- creating mesh form :
+A. Name of mesh*
+B. Start date & time*
+C. Duration *
+D. Location with map view *
+
+*All fields are mandatory!
+
+- user clicks ‘create’. Gets a thanks you message pop up that summarizes the details of the mesh they just created. Redirected to landing page.
+
+4. Sign out
+- users that have a joined a mesh can be signed out by the following methods:
+A. The mesh expires. That is the duration of the mesh is over. All participants are automatically signed out of that mesh
+B. User leaves the location of the mesh network they had joined. Check for user location every 15 min.

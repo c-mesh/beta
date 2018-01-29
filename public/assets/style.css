@@ -1,0 +1,692 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+#app {
+    background-color: white;
+}
+
+/* bootstrap overrides */
+.btn-primary {
+    background-color: #000;
+    border-color: #000;
+}
+
+.form-control{
+    height: 40px;
+    font-size: 18px;
+}
+
+hr {
+    border-top: 1px solid #000
+}
+/* bootstrap overrides ends */
+
+.back img {
+    width: 35px;
+    height: 35px;
+    margin: 10px 0px 50px 10px;
+}
+
+.mesh {
+    background: #000;
+    color: #eff0f1;
+    border-radius: 10px;
+    max-height: 90px;
+}
+
+.mesh:hover {
+    cursor: pointer;
+}
+
+.mesh .title {
+    font-size: 15px;
+    line-height: 30px;
+    font-weight: 300;
+    padding-bottom: 5px;
+}
+
+.mesh .logo {
+    display: inline-block;
+    position: relative;
+    max-height: 75px;
+}
+
+.mesh .join-btn {
+    padding :3px 25px;
+    font-size:16px;
+    position:relative;
+    background-color:#0db1e7;
+    left:20px;
+}
+
+.mesh .second-line {
+    line-height: 30px;
+    height: 30px;
+}
+
+.mesh .second-line .separator {
+    font-size: 17px
+}
+
+.mesh .participants {
+    display: inline-block;
+    position:relative;
+    top: 5px;
+}
+
+.active-mesh-network {
+    margin-bottom: 30px;
+    color: #000;
+    font-style: italic;
+    left: 5px;
+    position: relative
+}
+
+.plus-btn {
+    width: 60px;
+    margin: 25px auto 25px auto;
+    left: 0;
+    right: 0;
+}
+
+.plus-btn:hover {
+    cursor: pointer;
+}
+
+/* .form-control {
+    height: 60px;
+    padding: 3px 29px;
+    font-weight: 300;
+    font-size: 19px;
+    background-color: #5a6878;
+    color: #fbfcfc;
+} */
+
+
+
+
+
+
+/************* Mesh Page ************/
+
+.mesh-page {
+    color: #525b68;
+    padding-top: 20px;
+    background-color: white;
+}
+
+.mesh-page .mesh p {
+    /* font-size: 30px;
+    text-align: center;
+    margin: 5px; */
+}
+
+.mesh-page .avatar {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 50px;
+}
+
+.mesh-page .avatar img {
+    width: 110px;
+    height: 110px;
+}
+
+.mesh-page .desc {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.mesh-page .full-name {
+    font-size: 27px;
+}
+
+.mesh-page .job {
+    font-size: 16px;
+    font-weight: 400;
+    padding: 5px 0 7px;
+}
+
+.mesh-page .btn-linkedin img {
+    vertical-align: middle;
+    margin: 4px;
+    margin-left: 0px;
+    border-radius: 5px;
+}
+
+.mesh-page .btn-linkedin span {
+    font-size: 21px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.mesh-page .terms-conditions {
+    padding: 80px 0 0 0;
+    overflow: auto;
+}
+
+.mesh-page .fixed-bottom, .mesh-page .fixed-top{
+    background: white;
+}
+
+
+
+@media only screen and (max-width: 320px) {
+    .mesh-page .btn-linkedin span {
+        font-size: 21px;
+        margin-left: 10px;
+        margin-right: 5px;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .panel-body {
+        padding: 5px;
+    }
+
+   .mesh-page .avatar {
+        margin-right: 5px;
+        width: 30%;
+    }
+
+    .mesh-page .avatar img {
+         width: 85px;
+         height: 85px;
+     }
+
+    .mesh-page .desc {
+        width: 68%;
+    }
+
+    .mesh-page .full-name {
+        font-size: 18px;
+    }
+
+    .mesh-page .job {
+        font-size: 15px;
+        font-weight: 400;
+        padding: 2px;
+    }
+}
+
+.btn-linkedin{
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+}
+
+.btn-linkedin span {
+    font-size: 21px;
+    margin-left: 20px;
+    margin-right: 15px;
+}
+
+.got-it-btn span{
+    font-size: 21px;
+    margin-left: 20px;
+    margin-right: 15px;
+}
+
+
+/************* Hack CSS ************/
+
+::-webkit-input-placeholder {
+    /* WebKit, Blink, Edge */
+    /* color: #fbfcfc !important; */
+}
+
+:-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    /* color: #fbfcfc !important; */
+    /* opacity: 1; */
+}
+
+::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
+    /* color: #fbfcfc !important; */
+    /* opacity: 1; */
+}
+
+:-ms-input-placeholder {
+    /* Internet Explorer 10-11 */
+    /* color: #fbfcfc !important; */
+}
+
+::-ms-input-placeholder {
+    /* Microsoft Edge */
+    /* color: #fbfcfc !important; */
+}
+
+::placeholder {
+    /* Most modern browsers support this now. */
+    /* color: #fbfcfc !important; */
+}
+
+input[type=date]::-webkit-inner-spin-button {
+    display: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+
+
+/* Map */
+
+#map {
+    height: 350px;
+}
+
+
+/* Custom Date & Time picker*/
+
+.custom-datepicker-input {
+    width: 100%;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-weight: 300;
+    height: 40px;
+    font-size: 18px;
+}
+
+.custom-datepicker-calendar .react-datepicker__day-name,
+.custom-datepicker-calendar .react-datepicker__day,
+.custom-datepicker-calenader .react-datepicker__time-name {
+    font-size: 14px;
+    width: 2.7rem;
+    line-height: 2.7rem;
+}
+
+@media only screen and (max-width: 320px) {
+    .custom-datepicker-calendar .react-datepicker__day-name,
+    .custom-datepicker-calendar .react-datepicker__day,
+    .custom-datepicker-calenader .react-datepicker__time-name {
+        font-size: 11px;
+        width: 2.0rem;
+        line-height: 2.0rem;
+    }
+
+
+}
+
+
+.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box {
+    width: 100% !important;
+    font-size: 14px !important;
+}
+
+
+@media only screen and (max-width: 1024px) {
+    .react-datepicker__navigation--next--with-time:not(.react-datepicker__navigation--next--with-today-button) {
+        right: 120px !important;
+    }
+}
+
+@media only screen and (min-width: 1025px) {
+    .react-datepicker__navigation--next--with-time:not(.react-datepicker__navigation--next--with-today-button) {
+        right: 150px !important;
+    }
+}
+
+.react-datepicker-wrapper,
+.react-datepicker__input-container {
+    display: block !important;
+}
+
+.react-datepicker__current-month,
+.react-datepicker-time__header {
+    margin-top: 0;
+    color: #000;
+    font-weight: bold;
+    font-size: 14px !important;
+}
+
+.page-center {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    right: 0;
+}
+
+/* layout */
+.fixed-logo {
+    padding-top: 10px;
+    position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 999;
+    background-color: white;
+}
+
+.fixed-logo .img-container{
+    height: 80px;
+}
+
+.fixed-logo img{
+    height: 100%;
+    width: 100%
+}
+
+.page-content {
+    padding-top: 90px; 
+    position: relative;
+    padding-bottom: 100px;
+}
+
+/* loader */
+.loader {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    right: 0;
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #000;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 0.8s linear infinite;
+    z-index: 9999;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.terms-conditions{
+    text-align: center;
+    padding: 0 0px;
+    overflow: auto;
+}
+
+.terms-conditions h2{
+    color: black;
+    left: 5px;
+    position: relative;
+}
+
+.terms-conditions .title{
+    position: fixed;
+    left: 0;
+    text-align: left;
+    right: 0;
+    margin: auto;
+    background-color: white;
+}
+
+.terms-conditions p{
+    padding-top: 90px;
+}
+
+.fixed-top{
+    position: fixed;
+    left: 0;
+    right: 0;
+    top:0;
+    margin: auto;
+    padding-top: 10px;
+}
+
+.fixed-bottom{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom:0;
+    margin: auto;
+    padding-bottom: 25px;
+    background: white;
+}
+
+
+/* create mesh page */
+
+.create-mesh-page {
+    padding-bottom: 25px;
+}
+
+
+.create-mesh-page .next-btn{
+    position: fixed;
+    left: 40%;
+    bottom: 50px;
+}
+
+.create-mesh-page .page-content{
+    padding-bottom:0; 
+}
+
+.create-mesh-page label{
+    font-size: 18px;
+}
+
+.create-mesh-info-panel, .create-mesh-info-form {
+    padding-top: 40px;
+}
+
+.create-mesh-info-panel-details {
+    border: 1px solid #e9e7e7;
+    border-radius: 20px;
+    padding: 15px 10px 10px 10px;
+}
+
+.create-mesh-info-panel label {
+    font-style: italic;
+    font-weight: 500;
+    color: black;
+    font-size: 18px;
+}
+
+.create-mesh-info-panel .value {
+    font-weight: 700;
+    font-size: 18px;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.create-mesh-info-panel .action-btns {
+    padding-top: 20px;     
+}
+
+.action-btns .btn {
+    min-width: 160px;
+}
+
+.no-meshes-img-container{
+    height: 320px;
+}
+
+.no-meshes-img-container img{
+    height: 100%;
+    width: 100%;
+}
+
+.login-start-page .page-content {
+    padding-bottom: 75px;
+    padding-top: 110px;
+}
+
+.login-start-page .fixed-bottom {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 50px;
+    margin: auto;
+    padding-bottom: 0;
+    background-color: transparent;
+}
+
+.terms-conditions{
+    padding-top: 105px;
+}
+
+.terms-conditions .info{
+    padding-top: 90px
+}
+
+.terms-conditions .confirmation{
+    font-style: italic;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    padding: 0 25px;
+}
+
+.terms-conditions .confirmation [class^="col-"]{
+    padding-left: 0;
+    padding-right: 5px;
+}
+
+.terms-conditions .confirmation input{
+    height: 20px;
+}
+
+.round-btn{
+    display:block;
+    width:60px;
+    height:60px;
+    line-height:60px;
+    border: 2px solid #f5f5f5;
+    border-radius: 50%;
+    color:#f5f5f5;
+    text-align:center;
+    text-decoration:none;
+    background: #464646;
+    box-shadow: 0 0 3px gray;
+    font-size:24px;
+    font-weight:bold;
+}
+
+.contact-us {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    text-align: center;
+}
+
+.contact-us h4{
+    margin-bottom: 20px;
+    color: #000;
+}
+
+.mesh-tutorial{
+    position: relative;
+}
+
+.mesh-tutorial .tutorial{
+    position: relative;
+}
+
+.mesh-tutorial .tutorial .img-container{
+    height: 320px;
+}
+
+.mesh-tutorial .tutorial .img-container img{
+    height: 100%;
+    width: 100%;
+    margin: auto;
+}
+
+.mesh-tutorial .panel {
+    background: #d1cbcb;
+    color: black;
+}
+
+.mesh-tutorial .mesh-panel {
+    position: absolute;
+    right: 0;
+    left: 0;
+    padding: 0px 4%;
+    top: 10px;
+}
+
+.mesh-tutorial .mesh-panel .second-line{
+    line-height: 10px;
+}
+
+.mesh-tutorial .mesh-panel .second-line .timer{
+    right: 40px;
+}
+
+.second-line .timer{
+    position: absolute;
+    right: 20px
+}
+
+.mesh-tutorial .mesh-panel .participants{
+    top: -5px;
+}
+
+.mesh-tutorial .mesh-panel .panel {
+    background-color: #000;
+    color: #eff0f1;
+    height: 80px;
+    margin-bottom: 0px;
+}
+
+.mesh-tutorial .linkedInfo {
+    padding: 0px 15px;
+    position: absolute;
+    left: 0px;
+    right: 0;
+    width: 100%;
+    bottom: -10px;
+}
+
+.mesh-tutorial .linkedInfo .panel {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    -webkit-box-shadow: 0 0 0;
+    box-shadow: 0 0 0;
+}
+
+.mesh-tutorial h2{
+    color: #000;
+}
+
+.mesh-tutorial .linkedInfo .job, .mesh-tutorial .linkedInfo .title{
+    font-size: 15px;
+}
+
+.mesh-tutorial .linkedInfo .full-name {
+    font-size: 20px;
+}
+
+.mesh-tutorial .linkedInfo .avatar{
+    width: 21%;
+}
+
+.mesh-tutorial .linkedInfo .desc{
+    width: 77%;
+}
+
+.mesh-tutorial .linkedInfo .avatar img{
+    width: 60px;
+    height: 60px;
+}
+
+.feedback-btn {
+    position: relative;
+    top: 20px;
+    background: grey;
+    color: white;
+    padding: 8px;
+    font-style: italic;
+}
+
+.panel-logo {
+    height: 50px;
+    width: 50px;
+    display: inline-block;
+    float: left;
+    margin-right: 10px;
+}
+
+.panel-logo img{
+    height: 100%;
+    width: 100%;
+}
