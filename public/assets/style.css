@@ -360,7 +360,11 @@ input[type=date]::-webkit-inner-spin-button {
     background-color: grey;
 }
 
-.fixed-logo .img-container{
+/*.fixed-logo .img-container{
+    height: 100px;
+}*/
+
+.img-container{
     height: 100px;
 }
 
