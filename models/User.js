@@ -35,10 +35,6 @@ var UserSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Meshes"
     }],
-    meshJoined: {
-        type: Array,
-        default: []
-    },
     acceptedTermsAndConditions: {
         type: Number,
         default: 0

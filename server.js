@@ -212,23 +212,23 @@ app.post('/api/join_mesh/:mesh_id', isAuthenticated, (req, res, next) => {
 
         // @TODO: here check for Terms and Conditions flag
 
-        User.findByIdAndUpdate(userId, {
-            $addToSet: {
-                meshJoined: {
-                    action: 'MESH_JOINED',
-                    meshId: meshId,
-                    joinedAt: Date.now(),
-                    joinedOn: today.toString()
-                }
-            }
-        })
-        .catch( (err) => {
-            console.log("failed to update meshJoined in users");
-        });
+        // User.findByIdAndUpdate(userId, {
+        //     // $addToSet: {
+        //     //     meshJoined: {
+        //     //         action: 'MESH_JOINED',
+        //     //         meshId: meshId,
+        //     //         joinedAt: Date.now(),
+        //     //         joinedOn: today.toString()
+        //     //     }
+        //     // }
+        // })
+        // .catch( (err) => {
+        //     console.log("failed to update meshJoined in users");
+        // });
 
-        const joinedMesh = user.meshJoined.find((mesh) => {
-            return mesh.meshId == meshId
-        });
+        // const joinedMesh = user.meshJoined.find((mesh) => {
+        //     return mesh.meshId == meshId
+        // });
 
         const meshUpdate = {
             $addToSet: {
@@ -236,11 +236,11 @@ app.post('/api/join_mesh/:mesh_id', isAuthenticated, (req, res, next) => {
             }
         };
 
-        if (!joinedMesh) {
-            meshUpdate.$inc = {
-                peakParticipantNumber: 1
-            }
-        }
+        // if (!joinedMesh) {
+        //     meshUpdate.$inc = {
+        //         peakParticipantNumber: 1
+        //     }
+        // }
 
         Mesh.findByIdAndUpdate(meshId, meshUpdate)
         .catch( (err) => {
@@ -518,6 +518,36 @@ app.post('/api/feedbackClicked', isAuthenticated, (req, res, next) => {
     let meshId = req.body.meshId;
     let timeStamp = req.body.timestamp;
     let type = req.body.activityType;
+
+    EventLog.create({
+        userId: userId,
+        meshId: meshId,
+        type: type,
+        timestamp: timeStamp
+    })
+})
+
+app.post('/api/meshJoined',isAuthenticated, (req, res, next) => {
+    let userId = req.user._id;
+    let meshId = req.body.meshId;
+    let timeStamp = req.body.timestamp;
+    let type = req.body.activityType;
+
+
+    EventLog.create({
+        userId: userId,
+        meshId: meshId,
+        type: type,
+        timestamp: timeStamp
+    })
+})
+
+app.post('/api/meshLeaveOn',isAuthenticated, (req, res, next) => {
+    let userId = req.user._id;
+    let meshId = req.body.meshId;
+    let timeStamp = req.body.timestamp;
+    let type = req.body.activityType;
+
 
     EventLog.create({
         userId: userId,

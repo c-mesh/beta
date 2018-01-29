@@ -7,6 +7,7 @@ import { Route, BrowserRouter, Switch } from "react-router-dom";
 import LoginOrStart from './children/LoginOrStart.jsx';
 import Form from './children/Form.jsx';
 import Mesh from './children/Mesh.jsx';
+import $ from 'jquery';
 
 class Routes extends React.Component {
     constructor(props) {
@@ -185,7 +186,7 @@ class Routes extends React.Component {
         console.log('RoutesR componentDidMount');
         var that = this;
 
-        that.geolocate();
+        // that.geolocate();
         this.locationTimer = setInterval(function() {
             that.geolocate();
         }, 60000);
@@ -240,6 +241,32 @@ class Routes extends React.Component {
                         });
                     }
 
+                }, function(err){
+                    navigator.sayswho= (function(){
+                        var ua= navigator.userAgent, tem,
+                            M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+                        if(/trident/i.test(M[1])){
+                            tem=  /\brv[ :]+(\d+)/g.exec(ua) || [];
+                            return 'IE '+(tem[1] || '');
+                        }
+                        if(M[1]=== 'Chrome'){
+                            tem= ua.match(/\b(OPR|Edge)\/(\d+)/);
+                            if(tem!= null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
+                        }
+                        M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+                        if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
+                        return M.join(' ');
+                    })();
+
+                    if(navigator.sayswho.includes("Chrome")){
+                        alert("Turn Location Services For Chrome")
+                    }
+                    if(navigator.sayswho.includes("Safari")){
+                        alert("Turn Location Services For Safari")
+                    }
+                    if(navigator.sayswho.includes("Mozilla")){
+                        alert("Turn Location Services For Mozilla")
+                    }
                 });
         } else {
             console.log('geolocate not working');

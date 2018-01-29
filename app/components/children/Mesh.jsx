@@ -196,6 +196,17 @@ class Mesh extends React.Component {
             console.info("response for inactive");
         });
 
+        let meshJoinedData = {
+            meshId: this.props.currentMeshID,
+            userId: this.props.userId,
+            timestamp: Date.now(),
+            activityType: "JoinedOn"
+
+        }
+        axios.post(`/api/meshJoined`, meshJoinedData).then((result)=>{
+            console.info("response for inactive");
+        });
+
     }
 
     componentWillUnmount(){
@@ -203,6 +214,16 @@ class Mesh extends React.Component {
         clearInterval(this.positionTimer);
         window.onfocus = null;
         window.onblur = null;
+        let data = {
+            meshId: this.props.currentMeshID,
+            userId: this.props.userId,
+            timestamp: Date.now(),
+            activityType: "meshLeaveOn"
+
+        }
+        axios.post(`/api/meshLeaveOn`, data).then((result)=>{
+            console.info("response for inactive");
+        });
     }
 
     componentDidUpdate(){

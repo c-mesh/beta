@@ -353,7 +353,6 @@ input[type=date]::-webkit-inner-spin-button {
 /* layout */
 .fixed-logo {
     padding-top: 10px;
-    padding-bottom: 0px;
     position: fixed;
     right: 0;
     left: 0;
@@ -361,12 +360,8 @@ input[type=date]::-webkit-inner-spin-button {
     background-color: white;
 }
 
-/*.fixed-logo .img-container{
-    height: 100px;
-}*/
-
-.img-container{
-    height: 100px;
+.fixed-logo .img-container{
+    height: 80px;
 }
 
 .fixed-logo img{
