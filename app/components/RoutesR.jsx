@@ -13,21 +13,21 @@ class Routes extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state= {
+        this.state = {
             isUserLogged: false,
             username: '',
             fullName: '',
             job: '',
             photo: '',
             linkedinURL: '',
-            meshes:[],
+            meshes: [],
             currentMeshID: '',
             currentMeshName: '',
             currentCoordinate: { lng: 0, lat: 0 },
             currentMeshCoordinate: { lng: 0, lat: 0 },
             currentMeshEndTimeMilliSec: 0,
-            currentMeshEndTime:0,
-            currentMeshParticipantsCount:0,
+            currentMeshEndTime: 0,
+            currentMeshParticipantsCount: 0,
             userLat: 0,
             userLng: 0,
             autocomplete: null,
@@ -52,9 +52,9 @@ class Routes extends React.Component {
         const lat = this.state.userLat;
         const lng = this.state.userLng;
         const latlng = new google.maps.LatLng(lat, lng);
-        return new Promise((resolve, reject)=>{
-            new google.maps.Geocoder().geocode({'latLng' : latlng}, (results, status)=>{
-                var addr = results.length > 0 ? results[0].formatted_address : '' ;
+        return new Promise((resolve, reject) => {
+            new google.maps.Geocoder().geocode({ 'latLng': latlng }, (results, status) => {
+                var addr = results.length > 0 ? results[0].formatted_address : '';
                 resolve({
                     meshAddress: addr,
                     meshDuration: '5',
@@ -64,7 +64,7 @@ class Routes extends React.Component {
         });
     }
 
-    updateHomeShow(){
+    updateHomeShow() {
         this.setState({
             isHomeShow: true
         }, () => {
@@ -108,15 +108,15 @@ class Routes extends React.Component {
 
     createMesh(mesh) {
         var that = this;
-        axios.post('/api/mesh', mesh).then((data)=>{
+        axios.post('/api/mesh', mesh).then((data) => {
             console.log('Created a new mesh');
             that.getAllMeshes();
         });
     }
 
-    getMeshById(meshId){
+    getMeshById(meshId) {
         const that = this;
-        axios.get(`/api/mesh/${meshId}`).then((data)=>{
+        axios.get(`/api/mesh/${meshId}`).then((data) => {
             console.log(data);
         });
     }
@@ -128,146 +128,163 @@ class Routes extends React.Component {
             alert("This Mesh Has Expired");
         } else {
             axios.post(`/api/join_mesh/${meshID}`)
-            .then( (data) => {
-                console.log('database joining success');
-                console.log(data);
-                this.setState({
-                    currentMeshID:meshID,
-                    currentMeshName: meshName,
-                    currentMeshEndTimeMilliSec: meshEndTimeMilliSec,
-                    currentMeshEndTime: endTime,
-                    currentMeshParticipantsCount: participants
-                });
+                .then((data) => {
+                    console.log('database joining success');
+                    console.log(data);
+                    this.setState({
+                        currentMeshID: meshID,
+                        currentMeshName: meshName,
+                        currentMeshEndTimeMilliSec: meshEndTimeMilliSec,
+                        currentMeshEndTime: endTime,
+                        currentMeshParticipantsCount: participants
+                    });
 
-                history.push({ pathname: `/mesh/${meshID}` });
-            })
-            .catch( (err) => {
-                const response = err.response.data;
-                console.log('Mesh joining error');
-                console.log(response);
-            });
+                    history.push({ pathname: `/mesh/${meshID}` });
+                })
+                .catch((err) => {
+                    const response = err.response.data;
+                    console.log('Mesh joining error');
+                    console.log(response);
+                });
         }
         //TODO: add this user to mesh via Mongoose
     }
 
     getAllMeshes() {
         var that = this;
-            axios.get('/api/meshes').then((result) => {
-                var meshes = result.data;
-                var filteredMeshes = [];
-                if (Object.keys(meshes).length > 0){
-                    filteredMeshes = meshes.filter((v) => {
-                        var R = 6371e3;
-                        var lat1 =  v.meshCoordinate.lat;
-                        var lon1 =  v.meshCoordinate.lng;
-                        var lat2 = that.state.userLat;
-                        var lon2 = that.state.userLng;
-                        var φ1 = (lat1)/180*Math.PI;
-                        var φ2 = (lat2)/180*Math.PI;
-                        var Δφ = (lat2-lat1)/180*Math.PI;
-                        var Δλ = (lon2-lon1)/180*Math.PI;
+        axios.get('/api/meshes').then((result) => {
+            var meshes = result.data;
+            var filteredMeshes = [];
+            if (Object.keys(meshes).length > 0) {
+                filteredMeshes = meshes.filter((v) => {
+                    var R = 6371e3;
+                    var lat1 = v.meshCoordinate.lat;
+                    var lon1 = v.meshCoordinate.lng;
+                    var lat2 = that.state.userLat;
+                    var lon2 = that.state.userLng;
+                    var φ1 = (lat1) / 180 * Math.PI;
+                    var φ2 = (lat2) / 180 * Math.PI;
+                    var Δφ = (lat2 - lat1) / 180 * Math.PI;
+                    var Δλ = (lon2 - lon1) / 180 * Math.PI;
 
-                        var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                                        Math.cos(φ1) * Math.cos(φ2) *
-                                        Math.sin(Δλ/2) * Math.sin(Δλ/2);
-                        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    var a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                        Math.cos(φ1) * Math.cos(φ2) *
+                        Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+                    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-                        var d = R * c;
-                        return d < 150; // Inside 50m radius
-                    });
-                    that.setState({meshes: filteredMeshes, showLoader: false});
-                }else{
-                    that.setState({showLoader: false});
-                }
-            });
+                    var d = R * c;
+                    return d < 150; // Inside 50m radius
+                });
+                that.setState({ meshes: filteredMeshes, showLoader: false });
+            } else {
+                that.setState({ showLoader: false });
+            }
+        });
     }
 
-    componentDidMount(){
+    componentDidMount() {
         console.log('RoutesR componentDidMount');
         var that = this;
 
         // that.geolocate();
-        this.locationTimer = setInterval(function() {
+        this.locationTimer = setInterval(function () {
             that.geolocate();
         }, 60000);
-        this.setState({showLoader: true}, ()=>{
-            that.meshesTimer = setInterval(function() {
+        this.setState({ showLoader: true }, () => {
+            that.meshesTimer = setInterval(function () {
                 that.getAllMeshes();
             }, 6000);
         });
 
         if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    var pos = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
-                    console.log(`latitude: ${pos.lat}, longitude: ${pos.lng}`);
-                    that.setState({
-                        userLat: pos.lat,
-                        userLng: pos.lng
-                    });
-                    var circle = new google.maps.Circle({
-                            center: pos,
-                            radius: position.coords.accuracy
-                        });
-                    if (that.state.autocomplete){
-                        that.state.autocomplete.setBounds(circle.getBounds());
-                    }
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                console.log(`latitude: ${pos.lat}, longitude: ${pos.lng}`);
+                that.setState({
+                    userLat: pos.lat,
+                    userLng: pos.lng
+                });
+                var circle = new google.maps.Circle({
+                    center: pos,
+                    radius: position.coords.accuracy
+                });
+                if (that.state.autocomplete) {
+                    that.state.autocomplete.setBounds(circle.getBounds());
+                }
 
-                    if (!that.state.username){
-                        axios.get('/api/loggedin').then((res1) => {
-                            var data = res1.data;
-                            that.changeLoggedIn(data);
-                            if (data.isLogged) {
-                                axios.get(`/api/user/${data.user._id}`).then((res2) => {
-                                    that.updateUser(res2.data.user);
-                                    if (res2.data.page) {
-                                        if (res2.data.page == 'mesh') {
-                                            that.updateMesh(res2.data.mesh);
-                                        }
-                                        history.push(`/${res2.data.page}`);
-                                    } else {
-                                        that.setState({
-                                            isHomeShow: true
-                                        });
+                if (!that.state.username) {
+                    axios.get('/api/loggedin').then((res1) => {
+                        var data = res1.data;
+                        that.changeLoggedIn(data);
+                        if (data.isLogged) {
+                            axios.get(`/api/user/${data.user._id}`).then((res2) => {
+                                that.updateUser(res2.data.user);
+                                if (res2.data.page) {
+                                    if (res2.data.page == 'mesh') {
+                                        that.updateMesh(res2.data.mesh);
                                     }
-                                });
-                            } else {
-                                that.setState({
-                                    isHomeShow: true
-                                });
-                            }
-                        });
+                                    history.push(`/${res2.data.page}`);
+                                } else {
+                                    that.setState({
+                                        isHomeShow: true
+                                    });
+                                }
+                            });
+                        } else {
+                            that.setState({
+                                isHomeShow: true
+                            });
+                        }
+                    });
+                }
+
+            }, function (err) {
+                navigator.sayswho = (function () {
+                    var ua = navigator.userAgent, tem,
+                        M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+                    if (/trident/i.test(M[1])) {
+                        tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+                        return 'IE ' + (tem[1] || '');
                     }
+                    if (M[1] === 'Chrome') {
+                        tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
+                        if (tem != null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
+                    }
+                    M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
+                    if ((tem = ua.match(/version\/(\d+)/i)) != null) M.splice(1, 1, tem[1]);
+                    return M.join(' ');
+                })();
+                var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-                }, function(err){
-                    navigator.sayswho= (function(){
-                        var ua= navigator.userAgent, tem,
-                            M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
-                        if(/trident/i.test(M[1])){
-                            tem=  /\brv[ :]+(\d+)/g.exec(ua) || [];
-                            return 'IE '+(tem[1] || '');
-                        }
-                        if(M[1]=== 'Chrome'){
-                            tem= ua.match(/\b(OPR|Edge)\/(\d+)/);
-                            if(tem!= null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
-                        }
-                        M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
-                        if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
-                        return M.join(' ');
-                    })();
 
-                    if(navigator.sayswho.includes("Chrome")){
+                if (iOS) {
+                    if (navigator.userAgent.match('CriOS')) {
+                        alert("Turn Location Services For Chrome");
+                    } else {
+                        if (navigator.userAgent.toLowerCase().indexOf('fxios') > -1) {
+                            alert("Turn Location Services For Mozilla")
+                        }
+                        else {
+                            if (navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPhone/i)) {
+                                alert("Turn Location Services For Safari")
+                            }
+                        }
+                    }
+                } else {
+                    if (navigator.sayswho.includes("Chrome")) {
                         alert("Turn Location Services For Chrome")
                     }
-                    if(navigator.sayswho.includes("Safari")){
+                    if (navigator.sayswho.includes("Safari")) {
                         alert("Turn Location Services For Safari")
                     }
-                    if(navigator.sayswho.includes("Mozilla")){
+                    if (navigator.sayswho.includes("Mozilla")) {
                         alert("Turn Location Services For Mozilla")
                     }
-                });
+                }
+            });
         } else {
             console.log('geolocate not working');
         }
@@ -279,60 +296,60 @@ class Routes extends React.Component {
         clearInterval(this.meshesTimer);
     }
 
-    setAutocomplete (obj){
-        this.setState({autocomplete: obj});
+    setAutocomplete(obj) {
+        this.setState({ autocomplete: obj });
         console.log('trying to set autocomplete');
     }
 
-    geolocate(){
+    geolocate() {
         var that = this;
         if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    var pos = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
-                    console.log(`latitude: ${pos.lat}, longitude: ${pos.lng}`);
-                    that.setState({
-                        userLat: pos.lat,
-                        userLng: pos.lng,
-                        currentCoordinate: pos
-                    });
-                    var circle = new google.maps.Circle({
-                            center: pos,
-                            radius: position.coords.accuracy
-                        });
-                        if (that.state.autocomplete){
-                            that.state.autocomplete.setBounds(circle.getBounds());
-                        }
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                console.log(`latitude: ${pos.lat}, longitude: ${pos.lng}`);
+                that.setState({
+                    userLat: pos.lat,
+                    userLng: pos.lng,
+                    currentCoordinate: pos
                 });
+                var circle = new google.maps.Circle({
+                    center: pos,
+                    radius: position.coords.accuracy
+                });
+                if (that.state.autocomplete) {
+                    that.state.autocomplete.setBounds(circle.getBounds());
+                }
+            });
         } else {
             console.log('geolocate not working');
         }
     }
 
-    render(){
+    render() {
         var that = this;
         return (
             <div>
                 <Switch>
-                    <Route exact path="/"  render={(props) => (
-                        <LoginOrStart {... props}
+                    <Route exact path="/" render={(props) => (
+                        <LoginOrStart {...props}
                             userId={this.state.userId}
                             acceptedTermsAndConditions={this.state.acceptedTermsAndConditions}
                             showLoader={this.state.showLoader}
                             changeLoggedIn={this.changeLoggedIn}
                             updateUser={this.updateUser}
-                            isUserLogged = {this.state.isUserLogged}
+                            isUserLogged={this.state.isUserLogged}
                             meshes={this.state.meshes}
                             username={this.state.username}
                             currentMesh={this.state.currentMesh}
                             joinCurrentMesh={this.joinCurrentMesh}
-                            updateMesh = {this.updateMesh}
+                            updateMesh={this.updateMesh}
                             isShow={this.state.isHomeShow}
                         />
 
-                    )}/>
+                    )} />
 
                     <Route path="/form" render={(props) => (
                         <Form
@@ -345,7 +362,7 @@ class Routes extends React.Component {
                             autocomplete={this.state.autocomplete}
                             updateHomeShow={this.updateHomeShow}
                         />
-                    )}/>
+                    )} />
 
                     <Route path="/mesh" render={(props) => (
                         <Mesh
@@ -365,9 +382,9 @@ class Routes extends React.Component {
                             currentMeshEndTime={this.state.currentMeshEndTime}
                             currentMeshParticipantsCount={this.state.currentMeshParticipantsCount}
                             updateHomeShow={this.updateHomeShow}
-                            updateMesh = {this.updateMesh}
+                            updateMesh={this.updateMesh}
                         />
-                    )}/>
+                    )} />
 
                 </Switch>
             </div>
