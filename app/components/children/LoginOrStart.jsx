@@ -53,7 +53,7 @@ class LoginOrStart extends React.Component {
                     <div className="container fixed-logo">
                         <div className="img-container">
                         <a href="/">
-                            <img src="/assets/images/logo.png" className="img-responsive center-block"/>
+                            
                         </a>
                         </div>
                         {
@@ -227,169 +227,169 @@ class LoginOrStart extends React.Component {
 
 export default withRouter(LoginOrStart);
 
-// componentWillMount() {
+componentWillMount() {
 
-    //     this.setState({
-    //         pageShow: false
-    //     });
+        this.setState({
+            pageShow: false
+        });
 
-    //     var that = this;
-    //     if (!this.props.username){
-    //         axios.get('/api/loggedin').then((res1) => {
-    //             var data = res1.data;
-    //             that.props.changeLoggedIn(data);
-    //             if (data.isLogged) {
-    //                 axios.get(`/api/user/${data.user._id}`).then((res2) => {
-    //                     that.props.updateUser(res2.data.user);
-    //                     if (res2.data.page) {
-    //                         if (res2.data.page == 'mesh') {
-    //                             that.props.updateMesh(res2.data.mesh);
-    //                         }
-    //                         history.push(`/${res2.data.page}`);
-    //                     } else {
-    //                         that.setState({
-    //                             pageShow: true
-    //                         });
-    //                     }
-    //                 });
-    //             } else {
-    //                 that.setState({
-    //                     pageShow: true
-    //                 });
-    //             }
-    //         });
-    //     }
-    //     this.geolocate();
-    // }
+        var that = this;
+        if (!this.props.username){
+            axios.get('/api/loggedin').then((res1) => {
+                var data = res1.data;
+                that.props.changeLoggedIn(data);
+                if (data.isLogged) {
+                    axios.get(`/api/user/${data.user._id}`).then((res2) => {
+                        that.props.updateUser(res2.data.user);
+                        if (res2.data.page) {
+                            if (res2.data.page == 'mesh') {
+                                that.props.updateMesh(res2.data.mesh);
+                            }
+                            history.push(`/${res2.data.page}`);
+                        } else {
+                            that.setState({
+                                pageShow: true
+                            });
+                        }
+                    });
+                } else {
+                    that.setState({
+                        pageShow: true
+                    });
+                }
+            });
+        }
+        this.geolocate();
+    }
 
-    // componentDidMount(){
-    //     var that = this;
-    //     if (!this.props.username){
-    //         axios.get('/api/loggedin').then((res1) => {
-    //             var data = res1.data;
-    //             that.props.changeLoggedIn(data);
-    //             if (data.isLogged) {
-    //                 axios.get(`/api/user/${data.user._id}`).then((res2) => {
-    //                     that.props.updateUser(res2.data.user);
-    //                     if (res2.data.page) {
-    //                         if (res2.data.page == 'mesh') {
-    //                             that.props.updateMesh(res2.data.mesh);
-    //                         }
-    //                         history.push(`/${res2.data.page}`);
-    //                     }
-    //                 });
-    //             }
-    //         });
-    //     }
-    //     this.geolocate();
-    // }
+    componentDidMount(){
+        var that = this;
+        if (!this.props.username){
+            axios.get('/api/loggedin').then((res1) => {
+                var data = res1.data;
+                that.props.changeLoggedIn(data);
+                if (data.isLogged) {
+                    axios.get(`/api/user/${data.user._id}`).then((res2) => {
+                        that.props.updateUser(res2.data.user);
+                        if (res2.data.page) {
+                            if (res2.data.page == 'mesh') {
+                                that.props.updateMesh(res2.data.mesh);
+                            }
+                            history.push(`/${res2.data.page}`);
+                        }
+                    });
+                }
+            });
+        }
+        this.geolocate();
+    }
 
-    // geolocate(){
-    //     if (navigator.geolocation) {
-    //         navigator.geolocation.getCurrentPosition(function(position) {
-    //             var geolocation = {
-    //                 lat: position.coords.latitude,
-    //                 lng: position.coords.longitude
-    //             };
-    //         }, function(failure) {
-    //             console.log('Geolocation Error: ' + failure.message);
-    //         });
-    //     }
-    // }
+    geolocate(){
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var geolocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+            }, function(failure) {
+                console.log('Geolocation Error: ' + failure.message);
+            });
+        }
+    }
 
-//     <Modal show={this.state.showModal1} onHide={this.close1}>
-//     <Modal.Header closeButton>
-//         <Modal.Title>Terms and Agreement</Modal.Title>
-//     </Modal.Header>
-//     <Modal.Body>
-//         Some terms and agreement
-//         </Modal.Body>
-//     <Modal.Footer>
-//         <a href="/auth/linkedin/page/form" className="btn btn-primary">
-//             Agree
-//         </a>
-//     </Modal.Footer>
-// </Modal>
+    <Modal show={this.state.showModal1} onHide={this.close1}>
+    <Modal.Header closeButton>
+        <Modal.Title>Terms and Agreement</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+        Some terms and agreement
+        </Modal.Body>
+    <Modal.Footer>
+        <a href="/auth/linkedin/page/form" className="btn btn-primary">
+            Agree
+        </a>
+    </Modal.Footer>
+</Modal>
 
-// renderContentUserNotLoggedIn(){
-//     const that = this;
-//     return (
-//         <div>
+renderContentUserNotLoggedIn(){
+    const that = this;
+    return (
+        <div>
            
-//             <div className="container page-content">
-//                 <div className="row">
-//                     <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-//                         {
-//                             this.props.meshes.length > 0 ?
-//                             (<h3 className="active-mesh-network">Join a mesh network:</h3>):
-//                             null
-//                         }
-//                     </div>
-//                 </div>
-//                     { 
-//                         this.props.meshes.length > 0 && !this.state.showTermsAndCondition?
-//                         this.props.meshes.map(
-//                         function(mesh, i) {
-//                             return (
-//                                 <div className="row" onClick={that.props.joinCurrentMesh.bind(that,mesh._id, mesh.meshName, mesh.meshEndTimeMilliSec)} key={i}>
-//                                     <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-//                                         <MeshPanel
-//                                             meshName={mesh.meshName}
-//                                             meshEndTime={mesh.meshEndTime}
-//                                             participantsCount={mesh.users.length}/>
-//                                     </div>
-//                                 </div>
-//                             )
-//                         }):
-//                         (()=>{
-//                             return this.props.showLoader || this.state.showTermsAndCondition?
-//                             null:
-//                             <img style={{margin:"auto"}} class="img img-responsive"
-//                                     src="/assets/images/no_meshes_sign_img.png"/>
-//                         })()
-//                     }
-//                 {
-//                     this.state.showTermsAndCondition ?
-//                     this.renderTermsAndConditions():
-//                     null
-//                 }
-//                 {
-//                     !this.props.showLoader && !this.state.showTermsAndCondition?
-//                     <PlusButton onClick={(()=>{this.setState({showTermsAndCondition: true})})}/>:
-//                     null
-//                 }
-//             </div>
-//         </div>
-//     )
-// }
+            <div className="container page-content">
+                <div className="row">
+                    <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+                        {
+                            this.props.meshes.length > 0 ?
+                            (<h3 className="active-mesh-network">Join a mesh network:</h3>):
+                            null
+                        }
+                    </div>
+                </div>
+                    { 
+                        this.props.meshes.length > 0 && !this.state.showTermsAndCondition?
+                        this.props.meshes.map(
+                        function(mesh, i) {
+                            return (
+                                <div className="row" onClick={that.props.joinCurrentMesh.bind(that,mesh._id, mesh.meshName, mesh.meshEndTimeMilliSec)} key={i}>
+                                    <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+                                        <MeshPanel
+                                            meshName={mesh.meshName}
+                                            meshEndTime={mesh.meshEndTime}
+                                            participantsCount={mesh.users.length}/>
+                                    </div>
+                                </div>
+                            )
+                        }):
+                        (()=>{
+                            return this.props.showLoader || this.state.showTermsAndCondition?
+                            null:
+                            <img style={{margin:"auto"}} class="img img-responsive"
+                                    src="/assets/images/no_meshes_sign_img.png"/>
+                        })()
+                    }
+                {
+                    this.state.showTermsAndCondition ?
+                    this.renderTermsAndConditions():
+                    null
+                }
+                {
+                    !this.props.showLoader && !this.state.showTermsAndCondition?
+                    <PlusButton onClick={(()=>{this.setState({showTermsAndCondition: true})})}/>:
+                    null
+                }
+            </div>
+        </div>
+    )
+}
 
-// renderUserLoggedIn() {
-//     const that = this;
-//     return (
-//         <div>
-//             <div className="container fixed-logo">
-//                 <a href="/">
-//                     <img src="/assets/images/logo.png" className="img-responsive center-block"/>
-//                 </a>
-//                 <hr/>
-//             </div>
-//             <div className="container page-content">
-//                 <div className="row">
-//                     <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-//                         {
-//                             this.props.meshes.length > 0 ?
-//                             <h3 className="active-mesh-network">Join a mesh network:</h3>:
-//                             null
-//                         }
-//                     </div>
-//                 </div>
+renderUserLoggedIn() {
+    const that = this;
+    return (
+        <div>
+            <div className="container fixed-logo">
+                <a href="/">
+                    <img src="/assets/images/logo.png" className="img-responsive center-block"/>
+                </a>
+                <hr/>
+            </div>
+            <div className="container page-content">
+                <div className="row">
+                    <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+                        {
+                            this.props.meshes.length > 0 ?
+                            <h3 className="active-mesh-network">Join a mesh network:</h3>:
+                            null
+                        }
+                    </div>
+                </div>
                     
-//                     {
-//                         !this.props.showLoader?
-//                         <PlusButton onClick={(()=>{this.props.history.push('/form')})}/>:null
-//                     }
+                    {
+                        !this.props.showLoader?
+                        <PlusButton onClick={(()=>{this.props.history.push('/form')})}/>:null
+                    }
                 
-//             </div>
-//         </div>
-//     )
-// }
+            </div>
+        </div>
+    )
+}

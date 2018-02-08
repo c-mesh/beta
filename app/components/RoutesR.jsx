@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import history from '../history.js';
 import moment from 'moment';
-
+import LocationError from './LocationError.jsx';
 import { Route, BrowserRouter, Switch } from "react-router-dom";
 import LoginOrStart from './children/LoginOrStart.jsx';
 import Form from './children/Form.jsx';
@@ -262,26 +262,32 @@ class Routes extends React.Component {
 
                 if (iOS) {
                     if (navigator.userAgent.match('CriOS')) {
-                        alert("Turn Location Services For Chrome");
+                        history.push('/locationError');
+                        // alert("Turn Location Services For Chrome");
                     } else {
                         if (navigator.userAgent.toLowerCase().indexOf('fxios') > -1) {
-                            alert("Turn Location Services For Mozilla")
+                            history.push('/locationError');
+                            // alert("Turn Location Services For Mozilla")
                         }
                         else {
                             if (navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPhone/i)) {
-                                alert("Turn Location Services For Safari")
+                                history.push('/locationError');
+                                // alert("Turn Location Services For Safari")
                             }
                         }
                     }
                 } else {
                     if (navigator.sayswho.includes("Chrome")) {
-                        alert("Turn Location Services For Chrome")
+                        history.push('/locationError');
+                        // alert("Turn Location Services For Chrome")
                     }
                     if (navigator.sayswho.includes("Safari")) {
-                        alert("Turn Location Services For Safari")
+                        history.push('/locationError');
+                        // alert("Turn Location Services For Safari")
                     }
                     if (navigator.sayswho.includes("Mozilla")) {
-                        alert("Turn Location Services For Mozilla")
+                        history.push('/locationError');
+                        // alert("Turn Location Services For Mozilla")
                     }
                 }
             });
