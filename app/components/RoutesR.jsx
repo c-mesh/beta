@@ -32,6 +32,7 @@ class Routes extends React.Component {
             autocomplete: null,
             isHomeShow: false,
             showLoader: false,
+            isLocationOn:null,
         };
 
         this.initializeForm = this.initializeForm.bind(this);
@@ -262,15 +263,18 @@ class Routes extends React.Component {
                 if (iOS) {
                     if (navigator.userAgent.match('CriOS')) {
                         history.push('/locationError');
+                        window.location.reload();
                         // alert("Turn Location Services For Chrome");
                     } else {
                         if (navigator.userAgent.toLowerCase().indexOf('fxios') > -1) {
                             history.push('/locationError');
+                            window.location.reload();
                             // alert("Turn Location Services For Mozilla")
                         }
                         else {
                             if (navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPhone/i)) {
                                 history.push('/locationError');
+                                window.location.reload();
                                 // alert("Turn Location Services For Safari")
                             }
                         }
@@ -278,14 +282,17 @@ class Routes extends React.Component {
                 } else {
                     if (navigator.sayswho.includes("Chrome")) {
                         history.push('/locationError');
+                        window.location.reload();
                         // alert("Turn Location Services For Chrome")
                     }
                     if (navigator.sayswho.includes("Safari")) {
                         history.push('/locationError');
+                        window.location.reload();
                         // alert("Turn Location Services For Safari")
                     }
                     if (navigator.sayswho.includes("Mozilla")) {
                         history.push('/locationError');
+                        window.location.reload();
                         // alert("Turn Location Services For Mozilla")
                     }
                 }

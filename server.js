@@ -25,15 +25,15 @@ var port = process.env.PORT || 3000;
 //Routing HTTP to HTTPS
 
 app.enable('trust proxy');
-// app.use (function (req, res, next) {
-//         if (req.secure) {
-//                 // request was via https, so do no special handling
-//                 next();
-//         } else {
-//                 // request was via http, so redirect to https
-//                 res.redirect('http://' + req.headers.host + req.url);
-//         }
-// });
+app.use (function (req, res, next) {
+        if (req.secure) {
+                // request was via https, so do no special handling
+                next();
+        } else {
+                // request was via http, so redirect to https
+                res.redirect('http://' + req.headers.host + req.url);
+        }
+});
 
 app.use(express.static(__dirname + '/public'));
 
@@ -49,7 +49,7 @@ var server = app.listen(port, function(err) {
 // Server middle-wares
 app.use(express.static("public"));
 
-app.use(cors());
+// app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
