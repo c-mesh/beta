@@ -17,7 +17,6 @@ var router = express.Router();
 
 // Express server
 var app = express();
-// app.use(cors());
 var port = process.env.PORT || 3000;
 //var connectionString = "mongodb://localhost:27017/test"
 
@@ -31,16 +30,13 @@ app.use (function (req, res, next) {
                 next();
         } else {
                 // request was via http, so redirect to https
-                res.redirect('http://' + req.headers.host + req.url);
+                res.redirect('https://' + req.headers.host + req.url);
         }
 });
 
 app.use(express.static(__dirname + '/public'));
 
-var server = app.listen(port, function(err) {
-    if(err){
-        console.log("Failed to start server "+err);
-    }
+var server = app.listen(port, function() {
         console.log('Listening on port %d', server.address().port);
 });
 
@@ -573,18 +569,6 @@ app.get('/api/loggedin', (req, res) => {
 
 app.get('/web', function(req, res){
     res.sendFile(path.join(__dirname+'/public/web.html'));
-});
-
-app.get('/locationError', function(req, res){
-    res.sendFile(path.join(__dirname+'/public/LocationError.html'));
-});
-
-app.get('/instructions', function(req, res){
-    res.sendFile(path.join(__dirname+'/public/Instructions.html'));
-});
-
-app.get('/contact', function(req, res){
-    res.sendFile(path.join(__dirname+'/public/contactUs.html'));
 });
 
 // Redirect
