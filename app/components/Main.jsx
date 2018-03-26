@@ -13,6 +13,7 @@ class Main extends React.Component {
         return (
             <div>
                 <RoutesR />
+                {/* <a href="/logout" >Logout</a> */}
                 <img src="/assets/images/Why_linkedin_create_form_v1.png" style={{display:"none"}} />
                 <img src="/assets/images/Why_linkedin_v2.png" style={{display:"none"}} />
                 <img src="/assets/images/mesh_tutorial_1.png" style={{display:"none"}} />

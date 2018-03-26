@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm install && ./node_modules/webpack/bin/webpack.js -p && node server.js",
+    "preinstall":"npm install",
+    "start": "node server.js",
+    "postinstall":"./node_modules/webpack/bin/webpack.js -p",
     "watch": "./node_modules/webpack/bin/webpack.js --config ./webpack.dev.config.js --progress --colors",
     "dev": "node server.js",
     "build": "webpack"
@@ -37,6 +39,7 @@
     "morgan": "^1.8.2",
     "passport": "^0.4.0",
     "passport-linkedin-oauth2": "^1.5.0",
+    "passport-meetup": "^1.0.0",
     "react": "^16.2.0",
     "react-bootstrap": "^0.31.5",
     "react-datepicker": "^0.61.0",

@@ -23,6 +23,7 @@ class LoginOrStart extends React.Component {
         this.open1 = this.open1.bind(this);
         this.close2 = this.close2.bind(this);
         this.open2 = this.open2.bind(this);
+        console.log('login or start called')
     }
 
     close1() {
@@ -91,7 +92,7 @@ class LoginOrStart extends React.Component {
                         return {height: screen.height+"px"}
                     })()}>
                     <TermsAndConditions
-                        linkedInUrl="/auth/linkedin/page/form"
+                    linkedInUrl="/auth/linkedin/page/form"
                         logoOnTop={true}/>
                 </div>
             </div>

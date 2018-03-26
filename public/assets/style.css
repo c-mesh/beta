@@ -210,6 +210,11 @@ hr {
     }
 }
 
+.btn-meetup{
+    background-color: white;
+    border-color: white;
+}
+
 .btn-linkedin{
     color: #fff;
     background-color: #337ab7;
