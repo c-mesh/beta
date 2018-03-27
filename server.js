@@ -27,7 +27,7 @@ app.enable('trust proxy');
 app.use (function (req, res, next) {
     
         if (req.secure) {
-                // request was via https, so do no special handling
+                //request was via https, so do no special handling
                 next();
         } else {
                 // request was via http, so redirect to https
@@ -91,6 +91,7 @@ db.once('open', function() {
 });
 // app.get('/logout', function(req, res){
 //     try{
+//         req.logOut();
 //         req.session = null;
 //             console.log('logging out');
 //             res.redirect('/');
@@ -261,6 +262,31 @@ app.put('/api/user/:user_id',isAuthenticated, (req, res, next) => {
             return res.json(user);
         });
     })
+})
+
+app.put('/api/organizer/:id',isAuthenticated, (req, res, next) => {
+    let organizer
+    Organizer.findById(req.params.id,(err, user)=>{
+        if(err){
+            return res.status(400).send("unable to update a user")
+        }
+        else{
+            console.log('recieved body is')
+            console.log(req.body);
+            organizer = user;
+            organizer.email = req.body.email;
+            organizer.meshNetworkName = req.body.meshNetworkName;
+
+            Organizer.findByIdAndUpdate(req.params.id, req.body,(err)=>{
+                if(err){
+                    return res.status(400).send("unable to update a user")
+                }
+                
+            })
+        }
+        return res.json(organizer);
+    });
+    
 })
 
 // PUT /api/user/:id/join_mesh/:mesh_id - Join to a Mesh

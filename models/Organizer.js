@@ -35,6 +35,14 @@ var OrganizerSchema = new Schema({
         type: Number,
         default: 0
     },
+    email:{
+        type: String,
+        default: null
+    },
+    meshNetworkName:{
+        type: String,
+        default: "My Network"
+    },
     meshCreated: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Meshes"

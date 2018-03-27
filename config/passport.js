@@ -96,7 +96,8 @@ var passport = function(passport) {
                             'job': profile._json.results[0].title,
                             'URL': profile._json.results[0].link,
                             'acceptedTermsAndConditions': 1,
-                            'acceptedTermsAndConditionsOn': Date.now()
+                            'acceptedTermsAndConditionsOn': Date.now(),
+                            'authenticatedWith':'meetup'
                         }, function(err, data) {
                             if (err) {
                                 console.log(err);

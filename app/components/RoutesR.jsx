@@ -44,6 +44,7 @@ class Routes extends React.Component {
         this.setAutocomplete = this.setAutocomplete.bind(this);
         this.updateMesh = this.updateMesh.bind(this);
         this.updateHomeShow = this.updateHomeShow.bind(this);
+        this.UpdateMeetupOrganizer = this.UpdateMeetupOrganizer.bind(this);
         this.locationTimer = null;
         this.meshesTimer = null;
     }
@@ -112,6 +113,31 @@ class Routes extends React.Component {
             console.log('Created a new mesh');
             that.getAllMeshes();
         });
+    }
+    UpdateMeetupOrganizer(organizer){
+        var that = this;
+        axios.get('/api/loggedin').then((res1) => {
+            var data = res1.data;
+            that.changeLoggedIn(data);
+            if (data.isLogged) {
+                let req = {
+                    url:'/api/organizer/' + data.user._id,
+                    method: 'put',
+                    data: organizer 
+                }
+        axios(req).then((data) => {
+            //that.getAllMeshes();
+            that.setState({authenticatedWith: 'form'})
+            history.push({ pathname: `/form` });
+        })
+    } else{
+        console.log('not updatig user as user is not logged in')
+        history.push({ pathname: `/` });
+    }
+    }).catch((err) => {
+        console.log(`Error came while updating organizer ${JSON.stringify(err)}`)
+
+    })
     }
 
     getMeshById(meshId) {
@@ -223,10 +249,13 @@ class Routes extends React.Component {
                             axios.get(`/api/user/${data.user._id}`).then((res2) => {
                                 that.updateUser(res2.data.user);
                                 if (res2.data.page) {
+                                    that.state.authenticatedWith = res2.data.user.authenticatedWith;
+
                                     if (res2.data.page == 'mesh') {
                                         that.updateMesh(res2.data.mesh);
                                     }
                                     history.push(`/${res2.data.page}`);
+                                    
                                 } else {
                                     that.setState({
                                         isHomeShow: true
@@ -361,6 +390,8 @@ class Routes extends React.Component {
                             setAutocomplete={this.setAutocomplete}
                             autocomplete={this.state.autocomplete}
                             updateHomeShow={this.updateHomeShow}
+                            authenticatedWith = {this.state.authenticatedWith}
+                            updateOrganizer = {this.UpdateMeetupOrganizer}
                         />
                     )} />
 
