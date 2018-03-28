@@ -2,12 +2,38 @@ import React from 'react';
 import axios from 'axios';
 import history from '../history.js';
 import moment from 'moment';
+import ReactGA from 'react-ga';
 
 import { Route, BrowserRouter, Switch } from "react-router-dom";
 import LoginOrStart from './children/LoginOrStart.jsx';
 import Form from './children/Form.jsx';
 import Mesh from './children/Mesh.jsx';
 import $ from 'jquery';
+
+// TODO: move Analytics into a separate file
+class Analytics extends React.Component<RouteComponentProps<any>> {
+    componentDidMount() {
+    this.sendPageChange(this.props.location.pathname, this.props.location.search)
+}
+
+componentDidUpdate(prevProps: RouteComponentProps<any>) {
+    if (this.props.location.pathname !== prevProps.location.pathname
+      || this.props.location.search !== prevProps.location.search) {
+      this.sendPageChange(this.props.location.pathname, this.props.location.search)
+    }
+  }
+
+  sendPageChange(pathname: string, search: string = "") {
+    const page = pathname + search
+    ReactGA.set({page});
+    ReactGA.pageview(page);
+  }
+
+  render() {
+    return null
+  }
+}
+
 
 class Routes extends React.Component {
     constructor(props) {
@@ -33,6 +59,8 @@ class Routes extends React.Component {
             autocomplete: null,
             isHomeShow: false,
             showLoader: false,
+            locationServiceDisabled: false,
+            browserName: '',
         };
 
         this.initializeForm = this.initializeForm.bind(this);
@@ -44,7 +72,6 @@ class Routes extends React.Component {
         this.setAutocomplete = this.setAutocomplete.bind(this);
         this.updateMesh = this.updateMesh.bind(this);
         this.updateHomeShow = this.updateHomeShow.bind(this);
-        this.UpdateMeetupOrganizer = this.UpdateMeetupOrganizer.bind(this);
         this.locationTimer = null;
         this.meshesTimer = null;
     }
@@ -114,31 +141,6 @@ class Routes extends React.Component {
             that.getAllMeshes();
         });
     }
-    UpdateMeetupOrganizer(organizer){
-        var that = this;
-        axios.get('/api/loggedin').then((res1) => {
-            var data = res1.data;
-            that.changeLoggedIn(data);
-            if (data.isLogged) {
-                let req = {
-                    url:'/api/organizer/' + data.user._id,
-                    method: 'put',
-                    data: organizer 
-                }
-        axios(req).then((data) => {
-            //that.getAllMeshes();
-            that.setState({authenticatedWith: 'form'})
-            history.push({ pathname: `/form` });
-        })
-    } else{
-        console.log('not updatig user as user is not logged in')
-        history.push({ pathname: `/` });
-    }
-    }).catch((err) => {
-        console.log(`Error came while updating organizer ${JSON.stringify(err)}`)
-
-    })
-    }
 
     getMeshById(meshId) {
         const that = this;
@@ -201,27 +203,26 @@ class Routes extends React.Component {
                     var d = R * c;
                     return d < 150; // Inside 50m radius
                 });
+
+                ReactGA.modalview("/meshes/list/" + filteredMeshes.length);
                 that.setState({ meshes: filteredMeshes, showLoader: false });
             } else {
+                ReactGA.modalview("/meshes/list/" + 0)
                 that.setState({ showLoader: false });
             }
         });
     }
 
-    componentDidMount() {
-        console.log('RoutesR componentDidMount');
+    displayLocationInstructions(browserName) {
+        //alert("Turn Location Services For " + browserName)
+        ReactGA.modalview("/error/location_disabled/" + browserName)
+        this.setState({locationServiceDisabled: true, isHomeShow: true, browserName: browserName})
+    }
+
+    tryUpdateLocation(onSuccess, onError) {
         var that = this;
-
-        // that.geolocate();
-        this.locationTimer = setInterval(function () {
-            that.geolocate();
-        }, 60000);
-        this.setState({ showLoader: true }, () => {
-            that.meshesTimer = setInterval(function () {
-                that.getAllMeshes();
-            }, 6000);
-        });
-
+        // Fake location:
+        //var position = {coords:{latitude:37.373758, longitude:-122.054814, accurancy:100}}
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 var pos = {
@@ -240,7 +241,30 @@ class Routes extends React.Component {
                 if (that.state.autocomplete) {
                     that.state.autocomplete.setBounds(circle.getBounds());
                 }
+                onSuccess(position)
+            }, function (err) {
+                onError(err)
+            })
+        } else {
+            onError("navigator.geolocation is null")
+        }
+    }
 
+    componentDidMount() {
+        console.log('RoutesR componentDidMount');
+        var that = this;
+
+        // that.geolocate();
+        this.locationTimer = setInterval(function () {
+            that.geolocate();
+        }, 60000);
+        this.setState({ showLoader: true }, () => {
+            that.meshesTimer = setInterval(function () {
+                that.getAllMeshes();
+            }, 6000);
+        });
+
+       this.tryUpdateLocation(function (position) {
                 if (!that.state.username) {
                     axios.get('/api/loggedin').then((res1) => {
                         var data = res1.data;
@@ -249,13 +273,10 @@ class Routes extends React.Component {
                             axios.get(`/api/user/${data.user._id}`).then((res2) => {
                                 that.updateUser(res2.data.user);
                                 if (res2.data.page) {
-                                    that.state.authenticatedWith = res2.data.user.authenticatedWith;
-
                                     if (res2.data.page == 'mesh') {
                                         that.updateMesh(res2.data.mesh);
                                     }
                                     history.push(`/${res2.data.page}`);
-                                    
                                 } else {
                                     that.setState({
                                         isHomeShow: true
@@ -291,34 +312,35 @@ class Routes extends React.Component {
 
                 if (iOS) {
                     if (navigator.userAgent.match('CriOS')) {
-                        alert("Turn Location Services For Chrome");
+                        that.displayLocationInstructions("Chrome")
                     } else {
                         if (navigator.userAgent.toLowerCase().indexOf('fxios') > -1) {
-                            alert("Turn Location Services For Mozilla")
+                            that.displayLocationInstructions("Mozilla")
                         }
                         else {
                             if (navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPhone/i)) {
-                                alert("Turn Location Services For Safari")
-                            }
+                                that.displayLocationInstructions("Safari")
+                            } else {
+                                that.displayLocationInstructions("<Unknown browser>")
+			                }
                         }
                     }
                 } else {
                     if (navigator.sayswho.includes("Chrome")) {
-                        alert("Turn Location Services For Chrome")
+			            that.displayLocationInstructions("Chrome")
                     }
-                    if (navigator.sayswho.includes("Safari")) {
-                        alert("Turn Location Services For Safari")
+                    else if (navigator.sayswho.includes("Safari")) {
+			            that.displayLocationInstructions("Safari")
                     }
-                    if (navigator.sayswho.includes("Mozilla")) {
-                        alert("Turn Location Services For Mozilla")
+                    else if (navigator.sayswho.includes("Mozilla")) {
+			            that.displayLocationInstructions("Mozilla")
+                    } else {
+                        that.displayLocationInstructions("Unknown browser")
                     }
                 }
             });
-        } else {
-            console.log('geolocate not working');
-        }
-
     }
+
 
     componentWillUnmount() {
         clearInterval(this.locationTimer);
@@ -332,36 +354,21 @@ class Routes extends React.Component {
 
     geolocate() {
         var that = this;
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                var pos = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-                console.log(`latitude: ${pos.lat}, longitude: ${pos.lng}`);
-                that.setState({
-                    userLat: pos.lat,
-                    userLng: pos.lng,
-                    currentCoordinate: pos
-                });
-                var circle = new google.maps.Circle({
-                    center: pos,
-                    radius: position.coords.accuracy
-                });
-                if (that.state.autocomplete) {
-                    that.state.autocomplete.setBounds(circle.getBounds());
-                }
-            });
-        } else {
+        this.tryUpdateLocation(function() {}, function() {
             console.log('geolocate not working');
-        }
+        })
     }
+
 
     render() {
         var that = this;
         return (
             <div>
+                    <Route path="/" render={(props) => (
+                        <Analytics {...props} />
+                    )} />
                 <Switch>
+
                     <Route exact path="/" render={(props) => (
                         <LoginOrStart {...props}
                             userId={this.state.userId}
@@ -376,6 +383,8 @@ class Routes extends React.Component {
                             joinCurrentMesh={this.joinCurrentMesh}
                             updateMesh={this.updateMesh}
                             isShow={this.state.isHomeShow}
+                            locationServiceDisabled={this.state.locationServiceDisabled}
+                            browserName={this.state.browserName}
                         />
 
                     )} />
@@ -390,8 +399,6 @@ class Routes extends React.Component {
                             setAutocomplete={this.setAutocomplete}
                             autocomplete={this.state.autocomplete}
                             updateHomeShow={this.updateHomeShow}
-                            authenticatedWith = {this.state.authenticatedWith}
-                            updateOrganizer = {this.UpdateMeetupOrganizer}
                         />
                     )} />
 

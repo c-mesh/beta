@@ -25,9 +25,8 @@ var port = process.env.PORT || 3000;
 
 app.enable('trust proxy');
 app.use (function (req, res, next) {
-    
         if (req.secure) {
-                //request was via https, so do no special handling
+                // request was via https, so do no special handling
                 next();
         } else {
                 // request was via http, so redirect to https
@@ -74,7 +73,6 @@ app.use(passport.session());
 var User = require('./models/User.js');
 var Mesh = require('./models/Mesh.js');
 var EventLog = require('./models/EventLog.js');
-let Organizer = require('./models/Organizer.js');
 
 // Database logic
 mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true });
@@ -89,20 +87,7 @@ db.on('error', function(error) {
 db.once('open', function() {
     console.log('Mongoose connection successful.');
 });
-// app.get('/logout', function(req, res){
-//     try{
-//         req.logOut();
-//         req.session = null;
-//             console.log('logging out');
-//             res.redirect('/');
-//         //})
-//     }catch(ex){
-// console.log('unable to logou')
-// console.log(ex)
-// res.redirect('/')
-//     }
-    
-// })
+
 // Authentication with Passport and Linkedin
 app.get('/auth/linkedin/callback', function(req, res, next) {
     console.log('/auth/linkedin/callback')
@@ -139,54 +124,11 @@ app.get('/auth/linkedin/callback', function(req, res, next) {
     })(req, res, next);
 });
 
-
- 
-app.get('/auth/meetup/callback', function(req, res, next) {
-    console.log('/auth/meetup/callback')
-    passport.authenticate('meetup', {
-        failureRedirect: '/'
-    }, function(err, user, info) {
-        if (err) {
-            // return next(err);
-            return res.redirect('/');
-        }
-        if (!user) {
-            return res.redirect('/auth/meetup');
-        }
-        req.logIn(user, function(err) {
-            if (err) {
-                return next(err);
-            }
-
-            console.log('authenticate callback meshId: ' + req.session.meshId);
-            if (req.session.page == 'mesh') {
-            console.log('updating mesh: ' + req.session.meshId);
-                Mesh.findByIdAndUpdate(req.session.mesh.meshId, {
-                    $addToSet: {
-                        users: req.user
-                    },
-                    $inc: {peakParticipantNumber: 1}
-                }, (err, mesh) => {
-                    if (err) console.log(err);
-                });
-            }
-            return res.redirect('/');
-        });
-    })(req, res, next);
-});
-
 app.get('/auth/linkedin/page/:page',(req, res, next) => {
     req.session.page = req.params.page;
     console.log('req.session.page: ' + req.session.page);
     next();
 }, passport.authenticate('linkedin'));
-
-app.get('/auth/meetup/page/:page',(req, res, next) => {
-    req.session.page = req.params.page;
-    console.log('req.session.page: ' + req.session.page);
-    next();
-}, passport.authenticate('meetup'));
-
 
 app.get('/auth/linkedin/join-mesh/:meshId/:meshName/:meshEndTimeMilliSec', (req, res, next) => {
     req.session.page = 'mesh';
@@ -227,26 +169,9 @@ app.get('/api/user/:id', isAuthenticated, (req, res, next) => {
                 delete req.session.page;
             }
             console.log('/api/user/:id page:' + userObj.page);
-            if(user){
             res.json(userObj);
-            }else{
-                Organizer.findById(req.params.id, (err, user) => {
-                    userObj.user = user;
-                    if (req.session.page) {
-                        userObj.page = req.session.page;
-                        if (req.session.page == 'mesh') {
-                            userObj.mesh = req.session.mesh;
-                            delete req.session.mesh;
-                        }
-                        delete req.session.page;
-                    }
-                    console.log('/api/user/:id page:' + userObj.page);
-                    res.json(userObj);
-                });
-            }
         });
-
-    } else  res.status(401).end();
+    } else res.status(401).end();
 });
 
 // POST /api/user - Create a User
@@ -262,31 +187,6 @@ app.put('/api/user/:user_id',isAuthenticated, (req, res, next) => {
             return res.json(user);
         });
     })
-})
-
-app.put('/api/organizer/:id',isAuthenticated, (req, res, next) => {
-    let organizer
-    Organizer.findById(req.params.id,(err, user)=>{
-        if(err){
-            return res.status(400).send("unable to update a user")
-        }
-        else{
-            console.log('recieved body is')
-            console.log(req.body);
-            organizer = user;
-            organizer.email = req.body.email;
-            organizer.meshNetworkName = req.body.meshNetworkName;
-
-            Organizer.findByIdAndUpdate(req.params.id, req.body,(err)=>{
-                if(err){
-                    return res.status(400).send("unable to update a user")
-                }
-                
-            })
-        }
-        return res.json(organizer);
-    });
-    
 })
 
 // PUT /api/user/:id/join_mesh/:mesh_id - Join to a Mesh
@@ -659,18 +559,12 @@ app.post('/api/meshLeaveOn',isAuthenticated, (req, res, next) => {
 
 // GET /api/loggedin - Check if a user is authenticated
 app.get('/api/loggedin', (req, res) => {
-    console.log('api loggedin returns ' + req.isAuthenticated())
-    console.log('user is')
-    console.log(req.user)
     if (req.isAuthenticated()) {
-
         res.json({
             isLogged: true,
             user: req.user
         });
-    } 
-    
-    else res.json({ isLogged: false });
+    } else res.json({ isLogged: false });
 });
 
 app.get('/web', function(req, res){

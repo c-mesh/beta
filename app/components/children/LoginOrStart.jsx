@@ -23,7 +23,6 @@ class LoginOrStart extends React.Component {
         this.open1 = this.open1.bind(this);
         this.close2 = this.close2.bind(this);
         this.open2 = this.open2.bind(this);
-        console.log('login or start called')
     }
 
     close1() {
@@ -84,6 +83,36 @@ class LoginOrStart extends React.Component {
             </div>
         )
     }
+
+    isIOS() {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    }
+
+    renderLocationServiceExplain() {
+        return(
+            <div className="location-service-explain">
+            <h1 className="title">
+                Ooops!
+            </h1>
+            <h2 className="details">
+                This {this.props.browserName} does not have an access to location services
+           </h2>
+           <img src={"/assets/images/location_service_disabled_" + this.props.browserName.toLowerCase() + ".jpg"} className="browser-pic"/>
+            
+            <h2 className="details">
+                We need to know your location to find events near you.
+           </h2>
+            To enable location:
+            {
+                this.isIOS() ?
+                    <ul><li>Settings > Privacy > Location</li><li>Turn location services: <b>ON</b></li><li>Select your browser app ({this.props.browserName}); select <b>'While using the app'</b></li></ul>
+                    :
+                    <ul><li>Settings > Apps</li><li>Select your browser app ({this.props.browserName});</li><li>Browser app > permissions; turn location services: <b>ON</b></li></ul>
+            }
+
+           </div>
+        )
+    }
   
     renderTermsAndConditions() {
         return(
@@ -92,7 +121,7 @@ class LoginOrStart extends React.Component {
                         return {height: screen.height+"px"}
                     })()}>
                     <TermsAndConditions
-                    linkedInUrl="/auth/linkedin/page/form"
+                        linkedInUrl="/auth/linkedin/page/form"
                         logoOnTop={true}/>
                 </div>
             </div>
@@ -154,7 +183,7 @@ class LoginOrStart extends React.Component {
                         <div>
                             <hr style={{visibility: "hidden"}}/>
                             <div className="no-meshes-img-container">
-                                <img style={{margin:"auto"}} class="img img-responsive"
+                                <img style={{margin:"auto"}} className="img img-responsive"
                                     src="/assets/images/no_meshes_sign_img.png"/>
                             </div>
                         </div>
@@ -178,6 +207,10 @@ class LoginOrStart extends React.Component {
     }
 
     render(props) {
+
+        if(this.props.locationServiceDisabled) {
+            return this.renderLocationServiceExplain()
+        }
         var that = this;
         const content = (
             <div className="login-start-page">
@@ -345,7 +378,7 @@ export default withRouter(LoginOrStart);
 //                         (()=>{
 //                             return this.props.showLoader || this.state.showTermsAndCondition?
 //                             null:
-//                             <img style={{margin:"auto"}} class="img img-responsive"
+//                             <img style={{margin:"auto"}} className="img img-responsive"
 //                                     src="/assets/images/no_meshes_sign_img.png"/>
 //                         })()
 //                     }
