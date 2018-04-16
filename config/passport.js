@@ -1,5 +1,7 @@
 var LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
+let MeetupStrategy = require('passport-meetup').Strategy;
 var User = require('../models/User.js');
+let Organizer = require('../models/Organizer.js');
 
 var passport = function(passport) {
     passport.serializeUser(function(user, done) {
@@ -7,9 +9,19 @@ var passport = function(passport) {
     });
 
     passport.deserializeUser(function(id, done) {
+        console.log('_id caleed with ' + id)
         User.findById(id, function(err, user) {
-            done(null, user);
+            if(!user){
+            Organizer.findById(id, function(err, organizer) {
+                return done(null, organizer);
+            });
+        }else{
+
+        
+            return done(null, user);
+        }
         });
+        
     });
 
     passport.use(new LinkedInStrategy({
@@ -47,6 +59,51 @@ var passport = function(passport) {
                                 console.log(err);
                             } else {
                                 console.log('Done creating a new user');
+                                return done(null, data);
+                            }
+                        });
+                    }
+                });
+            });
+        }
+    ));
+
+    passport.use(new MeetupStrategy({        
+        consumerKey: process.env.MEETUP_CLIENT,
+        consumerSecret: process.env.MEETUP_CLIENT_SECRET,
+        callbackURL: process.env.MEETUP_CALLBACK_URL,
+        scope:['email']
+      },
+        function(accessToken, refreshToken, profile, done) {
+            console.log('meetup startegy called')
+            process.nextTick(function() {
+                console.log(`passport meetup Strategy:  ${JSON.stringify(profile)}`);
+                Organizer.findOne({
+                    'fullName': profile.displayName
+                }, function(err, user) {
+                    if (user) {
+                        console.log('Organizer already in database!');
+                        return done(null, user);
+                    } else {
+                        console.log('Creating a new Organizer in database!');
+
+                        var avatarURL = "/assets/images/default_avatar.png";
+                        if (profile._json.results[0] && profile._json.results[0] && profile._json.results[0].photo) avatarURL = profile._json.results[0].photo.photo_link;
+
+                        Organizer.create({
+                            'authorizerId': profile.id,
+                            'fullName': profile.displayName,
+                            'photo': avatarURL,
+                            'job': profile._json.results[0].title,
+                            'URL': profile._json.results[0].link,
+                            'acceptedTermsAndConditions': 1,
+                            'acceptedTermsAndConditionsOn': Date.now(),
+                            'authenticatedWith':'meetup'
+                        }, function(err, data) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log('Done creating a new Organizer');
                                 return done(null, data);
                             }
                         });

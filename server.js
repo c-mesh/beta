@@ -12,6 +12,8 @@ var cors = require('cors');
 var fs = require('fs');
 require('dotenv').config();
 mongoose.Promise = Promise;
+var meshService = require('./service')
+const { fork } = require('child_process');
 
 var router = express.Router();
 
@@ -25,8 +27,9 @@ var port = process.env.PORT || 3000;
 
 app.enable('trust proxy');
 app.use (function (req, res, next) {
+    
         if (req.secure) {
-                // request was via https, so do no special handling
+                //request was via https, so do no special handling
                 next();
         } else {
                 // request was via http, so redirect to https
@@ -73,6 +76,7 @@ app.use(passport.session());
 var User = require('./models/User.js');
 var Mesh = require('./models/Mesh.js');
 var EventLog = require('./models/EventLog.js');
+let Organizer = require('./models/Organizer.js');
 
 // Database logic
 mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true });
@@ -88,6 +92,21 @@ db.once('open', function() {
     console.log('Mongoose connection successful.');
 });
 
+const normal = fork('./service', {mongo: mongoose});
+// app.get('/logout', function(req, res){
+//     try{
+//         req.logOut();
+//         req.session = null;
+//             console.log('logging out');
+//             res.redirect('/');
+//         //})
+//     }catch(ex){
+// console.log('unable to logou')
+// console.log(ex)
+// res.redirect('/')
+//     }
+    
+// })
 // Authentication with Passport and Linkedin
 app.get('/auth/linkedin/callback', function(req, res, next) {
     console.log('/auth/linkedin/callback')
@@ -124,11 +143,196 @@ app.get('/auth/linkedin/callback', function(req, res, next) {
     })(req, res, next);
 });
 
+
+ 
+app.get('/auth/meetup/callback', function(req, res, next) {
+    console.log('/auth/meetup/callback')
+    passport.authenticate('meetup', {
+        failureRedirect: '/'
+    }, function(err, user, info) {
+        if (err) {
+            // return next(err);
+            return res.redirect('/');
+        }
+        if (!user) {
+            return res.redirect('/auth/meetup');
+        }
+        req.logIn(user, function(err) {
+            if (err) {
+                return next(err);
+            }
+
+            console.log('authenticate callback meshId: ' + req.session.meshId);
+            if (req.session.page == 'mesh') {
+            console.log('updating mesh: ' + req.session.meshId);
+                Mesh.findByIdAndUpdate(req.session.mesh.meshId, {
+                    $addToSet: {
+                        users: req.user
+                    },
+                    $inc: {peakParticipantNumber: 1}
+                }, (err, mesh) => {
+                    if (err) console.log(err);
+                });
+            }
+            return res.redirect('/');
+        });
+    })(req, res, next);
+});
+
 app.get('/auth/linkedin/page/:page',(req, res, next) => {
     req.session.page = req.params.page;
     console.log('req.session.page: ' + req.session.page);
     next();
 }, passport.authenticate('linkedin'));
+
+app.get('/auth/meetup/page/:page',(req, res, next) => {
+    req.session.page = req.params.page;
+    console.log('req.session.page: ' + req.session.page);
+    next();
+}, passport.authenticate('meetup'));
+
+app.delete('/api/events/:eventId', (req, res, next) => {
+    Mesh.remove({ eventId: req.params.eventId }, function(err) {
+        if (!err) {
+                res.status(200).send();
+        }
+        else {
+                res.status(400).send(err);
+        }
+    });
+})
+app.post('/api/events/', (req, res, next) => {
+    Mesh.create(req.body, function(err, data) {
+        if (!err) {
+                res.status(200).send(data);
+        }
+        else {
+                res.status(400).send(err);
+        }
+    });
+})
+app.get('/api/events/:memberId', (req, res, next) => {
+    let data=[]
+    //let mesh = [];
+    let memberId = req.params.memberId;
+    //memberId = 236810954;
+let requestUrl = `${process.env.MEETUP_API_URL}2/events?sign=true&key=${process.env.MEETUP_API_SECRET}&member_id=${memberId}&fields=event_hosts`
+console.log(requestUrl)
+    https.get(requestUrl, (resp) => {
+        console.log('statusCode:', resp.statusCode);
+        console.log('headers:', resp.headers);
+      
+        resp.on('data', (chunk) => {
+            console.log('chunk occoured')
+            //console.log(chunk)
+            data.push(chunk)
+          //process.stdout.write(d);
+        });
+      resp.on('end', () => {
+        
+                let buffer = Buffer.concat(data);
+                let datas = buffer.toString('utf8');
+                console.log('Data FUll recieved')
+                
+                //console.log(data)
+                
+                //(async () => { 
+                    
+                     getMeshEventDetails(datas, memberId, req.user)
+            //})()
+            .then((mesh) => {
+                console.log('mesh going to return have details')      
+                console.log(mesh)
+            return res.status(200).send(mesh);
+            })          
+              });
+      }).on('error', (e) => {
+        console.error(e);
+        return res.status(500).send(e);
+      })
+})
+async function getMeshEventDetails(datas, memberId, user){
+    let mesh = []
+    let meshModel;
+    let meshQuery;
+    var promise = new Promise(async function(resolve, reject){
+    let dataResult = JSON.parse(datas).results;
+    let item; let host; let hosts
+    for(var i =0 ; i<dataResult.length; i ++){
+        item = dataResult[i];
+        host = item.event_hosts;
+        for(var j =0; j<host.length; j++){
+          hosts = host[j];
+        
+        if(hosts.member_id == memberId 
+            && item.status == "upcoming"
+        ){
+            console.log('I recieved item')
+            console.log(item);
+            meshModel = {
+                eventId: item.id,
+                meshName: item.name,
+                meshStartTime: new Date(item.time),
+                meshEndTime: new Date(item.time + (item.duration? item.duration : 3*60*60*1000)),
+                meshCreatedAtTime: new Date(item.created),
+                meshCoordinate:  {
+                   lat: item.venue && item.venue.lat? item.venue.lat: null, 
+                    lng: item.venue && item.venue.lon ? item.venue.lon : null
+                },
+                meshCreatedBy: user
+            };
+            meshQuery = {
+                'eventId': item.id
+            };
+            let update  = await createMeshNetwork(meshQuery, meshModel)
+                console.log('this is what I am going to add in array')
+                console.log(update)
+            mesh.push(meshModel);
+            //} )
+        
+        }
+    }
+    }
+    console.log('what I am going to resolve')
+    console.log(mesh)
+resolve(mesh)
+})
+return promise;
+}
+  async function createMeshNetwork(meshQuery, meshModel){
+    //var promise = new Promise(function(resolve, reject){
+    Mesh.findOne(meshQuery, function(err, meshDetails) {
+        if(meshDetails){
+            console.log('mesh already exists. Update it!!')
+            Mesh.update(meshQuery, meshModel, function(err, data) {
+                if(err){
+                    console.log(err);
+                    //reject(err)
+                }
+                else{
+                    return data;
+                    //resolve(data)
+                }
+        })
+    }
+        else{
+            Mesh.create(meshModel, function(err, data) {
+                if(err){
+                    console.log(err);
+                    //reject(err)
+                }
+                else{
+                    return data;
+                    //resolve(data)
+                    //resolve(data)
+                }
+
+            })
+        }
+    })
+//})
+//return promise
+}
 
 app.get('/auth/linkedin/join-mesh/:meshId/:meshName/:meshEndTimeMilliSec', (req, res, next) => {
     req.session.page = 'mesh';
@@ -169,9 +373,26 @@ app.get('/api/user/:id', isAuthenticated, (req, res, next) => {
                 delete req.session.page;
             }
             console.log('/api/user/:id page:' + userObj.page);
+            if(user){
             res.json(userObj);
+            }else{
+                Organizer.findById(req.params.id, (err, user) => {
+                    userObj.user = user;
+                    if (req.session.page) {
+                        userObj.page = req.session.page;
+                        if (req.session.page == 'mesh') {
+                            userObj.mesh = req.session.mesh;
+                            delete req.session.mesh;
+                        }
+                        delete req.session.page;
+                    }
+                    console.log('/api/user/:id page:' + userObj.page);
+                    res.json(userObj);
+                });
+            }
         });
-    } else res.status(401).end();
+
+    } else  res.status(401).end();
 });
 
 // POST /api/user - Create a User
@@ -187,6 +408,31 @@ app.put('/api/user/:user_id',isAuthenticated, (req, res, next) => {
             return res.json(user);
         });
     })
+})
+
+app.put('/api/organizer/:id',isAuthenticated, (req, res, next) => {
+    let organizer
+    Organizer.findById(req.params.id,(err, user)=>{
+        if(err){
+            return res.status(400).send("unable to update a user")
+        }
+        else{
+            console.log('recieved body is')
+            console.log(req.body);
+            organizer = user;
+            organizer.email = req.body.email;
+            organizer.meshNetworkName = req.body.meshNetworkName;
+
+            Organizer.findByIdAndUpdate(req.params.id, req.body,(err)=>{
+                if(err){
+                    return res.status(400).send("unable to update a user")
+                }
+                
+            })
+        }
+        return res.json(organizer);
+    });
+    
 })
 
 // PUT /api/user/:id/join_mesh/:mesh_id - Join to a Mesh
@@ -559,12 +805,18 @@ app.post('/api/meshLeaveOn',isAuthenticated, (req, res, next) => {
 
 // GET /api/loggedin - Check if a user is authenticated
 app.get('/api/loggedin', (req, res) => {
+    console.log('api loggedin returns ' + req.isAuthenticated())
+    console.log('user is')
+    console.log(req.user)
     if (req.isAuthenticated()) {
+
         res.json({
             isLogged: true,
             user: req.user
         });
-    } else res.json({ isLogged: false });
+    } 
+    
+    else res.json({ isLogged: false });
 });
 
 app.get('/web', function(req, res){
