@@ -1,3 +1,6 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+}
 
 #app {
     background-color: white;
@@ -12,6 +15,55 @@
 .form-control{
     height: 40px;
     font-size: 18px;
+}
+
+.location-service-explain {
+    margin: 10px;
+}
+
+.location-service-explain .title,
+.location-service-explain .details {
+    margin: 10px;
+}
+
+.location-service-explain .title {
+    text-align: center;
+    font-size: 32px;
+}
+
+.location-service-explain .issue {
+    font-size: 20px;
+}
+
+.location-service-explain .nowrap {
+    width: 100%;
+    white-space:nowrap;
+    overflow:hidden;
+}
+
+.location-service-explain .details {
+    font-size: 16px;
+    display: inline-block;
+    max-width: 75%;
+    white-space: normal;
+    padding: 20px;
+}
+
+.location-service-explain .browser-pic {
+    margin: 10px;
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 10px;
+    max-width: 25%;
+    height: 200px;
+}
+
+.location-service-explain .instructions ul,
+.location-service-explain .instructions h2 {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    margin-top: 1px;
+    margin-bottom: 1px
 }
 
 hr {
@@ -205,11 +257,6 @@ hr {
         font-weight: 400;
         padding: 2px;
     }
-}
-
-.btn-meetup{
-    background-color: white;
-    border-color: white;
 }
 
 .btn-linkedin{
@@ -691,38 +738,4 @@ input[type=date]::-webkit-inner-spin-button {
 .panel-logo img{
     height: 100%;
     width: 100%;
-}
-
-.event-import-header{
-    
-        background: maroon;
-        margin: 5%;
-        padding: 4px;
-        color: white;
-        margin-bottom: 0px;
-    
-}
-.event-check{
-    margin-left: 10%;
-}
-.settings-image{
-    width: 25px;
-}
-.no-events{
-    text-align: center;
-    padding-top: 10px;
-}
-.mesh-header{
-    background: black;
-    min-height: 10px;
-    margin: 10px;
-    border-radius: 10px;
-    padding: 12px;
-    color: white;
-}
-.event-import-details{
-    border: 2px solid maroon;
-    margin: 5%;
-    margin-top: 0px;
-    padding: 4px;
 }

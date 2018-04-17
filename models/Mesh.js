@@ -2,9 +2,6 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 var MeshSchema = new Schema({
-    eventId:{
-        type: String
-    },
     meshName: {
         type: String,
         required: true
