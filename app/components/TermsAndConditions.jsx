@@ -1,29 +1,24 @@
 import React,{Component} from 'react';
 import termsAndConditions from '../TermsAndConditions.js'
+import ReactGA from 'react-ga';
 
 class TermsAndConditions extends Component {
 
-    constructor(props) {
-        super(props);
+    constructor() {
+        super();
         this.state = {
-            termsAndConditionsAccepted: true,
-            isMeetup: true,
-            postSignInText: "Or manually create a mesh network",
-            preLoginText: "Import all upcoming events:",
-            signInLogoSrc: "/assets/images/meetup_signin.png",
-            btnClass: "btn-meetup",
-            loginUrl: "/auth/meetup/page/form"
+            termsAndConditionsAccepted: true
         };
     }
 
-    setLinkedInState() {
-        this.setState({ preLoginText: "Sign in with LinkedIn:" }),
-        this.setState({ signInText: "Sign in with Linkedin" })
-        this.setState({ signInLogoSrc: "/assets/images/linkedin_trans.png" })
-        this.setState({ isMeetup: false })
-        this.setState({ btnClass: "btn-primary btn-linkedin" })
-        this.setState({ loginUrl:"/auth/linkedin/page/form"})
+    onLinkedinClick(event) {
+        ReactGA.modalview("/linkedin/sign_in_form");
+        ReactGA.event({
+  	        category: 'LinkedIn',
+  	        action: 'click on sign in'
+        });
     }
+
     render () {
         const getUrl = window.location;
         const baseUrl = getUrl .protocol + "//" + getUrl.host + "";
@@ -34,23 +29,12 @@ class TermsAndConditions extends Component {
             <div className="terms-conditions">
                 <div>
                     <div className="title col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-                        <h2 style={{fontStyle:"italic"}}>{this.state.preLoginText}</h2>
+                        <h2 style={{fontStyle:"italic"}}>Sign in with LinkedIn:</h2>
                         <hr/>
                     </div>
                 </div>
                 <div className="info col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-                {(() => {
-                        if (!this.state.isMeetup) {
-                            return (
-                                <img className="img img-responsive" src={imgUrl} />
-                            )
-                        }
-                        else {
-                            return (
-                                []
-                            )
-                        }
-                    })()}
+                    <img className="img img-responsive" src={imgUrl}/>
                 </div>
                 <div className="confirmation col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 text-left">
                     <div className="col-sm-1 col-xs-1 col-md-1">
@@ -70,32 +54,12 @@ class TermsAndConditions extends Component {
                 <div className="fixed-absolute" style={{backgroundColor:"white"}}>
                     <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 text-center">
                         <hr/>
-                        <a href={baseUrl + this.state.loginUrl}
-                            className={this.state.termsAndConditionsAccepted ?
-                                "btn " + this.state.btnClass : "btn disabled " + this.state.btnClass}>
-                            <img src={this.state.signInLogoSrc} />,
-                            <span>{this.state.signInText}</span>
+			<a href={baseUrl + this.props.linkedInUrl} onClick={this.onLinkedinClick.bind(this)} className={this.state.termsAndConditionsAccepted ?
+                                "btn btn-primary btn-linkedin" : "btn btn-primary btn-linkedin disabled" }>
+                            <img src="/assets/images/linkedin_trans.png"/>
+                            <span>Sign in with Linkedin</span>
                         </a>
                     </div>
-                    {(() => {
-
-                        if (this.state.isMeetup) {
-                            return (
-                                <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 text-center">
-                                    <hr />
-                                    <a onClick={() => {
-                                        this.setLinkedInState();
-
-                                    }}><span> {this.state.postSignInText} </span></a>
-                                </div>
-                            )
-                        }
-                        else {
-                            return (
-                                []
-                            )
-                        }
-                    })()}
                 </div>
             </div>
         )

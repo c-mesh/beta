@@ -10,6 +10,7 @@ import PlusButton from '../PlusButton.jsx';
 import ContactUs from '../ContactUs.jsx';
 import TermsAndConditions from '../TermsAndConditions.jsx';
 import FeedbackBtn from '../Feedback.jsx';
+import PersonPanel from '../PersonPanel.jsx';
 
 class LoginOrStart extends React.Component {
     constructor(props){
@@ -23,7 +24,6 @@ class LoginOrStart extends React.Component {
         this.open1 = this.open1.bind(this);
         this.close2 = this.close2.bind(this);
         this.open2 = this.open2.bind(this);
-        console.log('login or start called')
     }
 
     close1() {
@@ -92,7 +92,7 @@ class LoginOrStart extends React.Component {
                         return {height: screen.height+"px"}
                     })()}>
                     <TermsAndConditions
-                    linkedInUrl="/auth/linkedin/page/form"
+                        linkedInUrl="/auth/linkedin/page/form"
                         logoOnTop={true}/>
                 </div>
             </div>
@@ -119,6 +119,45 @@ class LoginOrStart extends React.Component {
                     />
                 </div>
              </div>
+        )
+    }
+
+    renderBookmarksTitle() {
+        return (
+            <h3 className="active-mesh-network">Bookmarks</h3>
+        )
+    }
+
+    renderBookmarks(props) {
+        const that = this;
+        if (!this.props.bookmarks  || !this.props.bookmarks.users || this.props.bookmarks.users.length == 0) {
+            return (
+                <div>
+                { this.renderBookmarksTitle() }
+                <b>Your bookmarks are empty.<p/>Add bookmarks using <img src="/assets/images/bookmark.png" className="bookmark-inline"/> button.</b>
+                </div>
+            )
+        }
+        return(
+            <div>
+                { this.renderBookmarksTitle() }
+                { 
+                    this.props.bookmarks.users.map((v, i) => {
+                    return (
+                        <div key={i}>
+                                <PersonPanel photo={v.photo}
+                                    fullName={v.fullName}
+                                    job={v.job}
+                                    firstName={v.firstName}
+                                    lastName={v.lastName}
+                                    linkedinURL={v.linkedinURL}
+                                    userId={v._id}
+                                    meshId={this.props.currentMeshID}/>
+                        </div>
+                        );
+                    })
+                }
+            </div>
         )
     }
 
@@ -154,7 +193,7 @@ class LoginOrStart extends React.Component {
                         <div>
                             <hr style={{visibility: "hidden"}}/>
                             <div className="no-meshes-img-container">
-                                <img style={{margin:"auto"}} class="img img-responsive"
+                                <img style={{margin:"auto"}} className="img img-responsive"
                                     src="/assets/images/no_meshes_sign_img.png"/>
                             </div>
                         </div>
@@ -178,6 +217,7 @@ class LoginOrStart extends React.Component {
     }
 
     render(props) {
+
         var that = this;
         const content = (
             <div className="login-start-page">
@@ -192,6 +232,7 @@ class LoginOrStart extends React.Component {
                             return (<div className="container page-content"
                                 style={{overflow:"auto", minHeight: (screen.height)+"px"}}>
                                     {this.renderShowMeshesPage()}
+                                    {this.renderBookmarks()}
                                     {this.state.showTermsAndCondition ? null : <ContactUs/>}
                             </div>)
                         }
@@ -345,7 +386,7 @@ export default withRouter(LoginOrStart);
 //                         (()=>{
 //                             return this.props.showLoader || this.state.showTermsAndCondition?
 //                             null:
-//                             <img style={{margin:"auto"}} class="img img-responsive"
+//                             <img style={{margin:"auto"}} className="img img-responsive"
 //                                     src="/assets/images/no_meshes_sign_img.png"/>
 //                         })()
 //                     }

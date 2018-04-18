@@ -230,6 +230,39 @@ class Mesh extends React.Component {
         this.render();
     }
 
+    waveClick(data) {
+        let request = {
+            wave_to: data._id
+        }
+        axios.post(`/api/wave`, request).then((result)=>{
+            console.info("waved");
+        });
+    }
+
+    renderWaveButton(data) {
+        const in_only = data.wave_in && !data.wave_out
+        const out_only = !data.wave_in && data.wave_out
+        const mutual = data.wave_in && data.wave_out
+
+        if (in_only) {
+            return (
+                <img src="/assets/images/hand.png" className="hand-wave-incoming-img" onClick={() => this.waveClick(data)}/>
+            )
+        } else if (out_only) {
+            return (
+                <img src="/assets/images/hand.png" className="hand-wave-outgoing-img"/>
+            )
+        } else if (mutual) {
+            return (
+                <img src="/assets/images/hand_mutual.png" className="hand-wave-mutual-img"/>
+            )
+        } else {
+            return (
+                <img src="/assets/images/hand.png" className="hand-wave-img" onClick={() => this.waveClick(data)}/>
+            )
+        }
+    }
+
     renderMeshParticipants(){
         const that = this;
         return (
@@ -248,6 +281,7 @@ class Mesh extends React.Component {
                                 lastName={v.lastName}
                                 linkedinURL={v.linkedinURL}
                                 userId={v._id}
+                                bookmarked={v.bookmarked}
                                 meshId={this.props.currentMeshID}/>
                         </div>
                     </div>:
@@ -296,6 +330,7 @@ class Mesh extends React.Component {
                                     lastName={this.props.lastName}
                                     linkedinURL={this.props.linkedinURL}
                                     userId={this.props.userId}
+                                    bookmarked={true}
                                 />
                             }
                             onGotIt={()=>{this.setState({gotIt:true})}}

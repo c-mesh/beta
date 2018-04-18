@@ -8,7 +8,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import MeshPanel from '../MeshPanel.jsx';
 import FeedbackBtn from '../Feedback.jsx';
 
-
 class Form extends React.Component {
     constructor(props){
         super(props);
@@ -21,9 +20,7 @@ class Form extends React.Component {
             showModal: false,
             showErrorMsgModal: false,
             startDateTime: null,
-            meshCreated: false,
-            organizerEmail: "",
-            organizerMeshName: ""
+            meshCreated: false
         };
         // this.meshDateChangeHandler = this.meshDateChangeHandler.bind(this);
         this.meshNameChangeHandler = this.meshNameChangeHandler.bind(this);
@@ -38,9 +35,6 @@ class Form extends React.Component {
         this.meshStartDateTimeChangeHandler = this.meshStartDateTimeChangeHandler.bind(this);
         this.validate = this.validate.bind(this);
         this.updateAddress = this.updateAddress.bind(this);
-        this.submitOrganizerUpdate = this.submitOrganizerUpdate.bind(this);
-        this.organizerMeshNameChangeHandler = this.organizerMeshNameChangeHandler.bind(this)
-        this.organizerEmailChangeHandler = this.organizerEmailChangeHandler.bind(this)
     }
 
     meshStartDateTimeChangeHandler(date) {
@@ -96,25 +90,9 @@ class Form extends React.Component {
     }
 
     meshAddressChangeHandler(event){
-        
         this.setState({meshAddress: event.target.value});
     }
-    organizerEmailChangeHandler(event){
-        this.setState({organizerEmail: event.target.value});
-    }
-    organizerMeshNameChangeHandler(event){
-        this.setState({organizerMeshName: event.target.value});
-    }
-submitOrganizerUpdate(){
-    let organizer =  {}
-    organizer.email = this.state.organizerEmail;
-    organizer.meshNetworkName = this.state.organizerMeshName;
-    this.props.updateOrganizer(organizer);
-    let that = this;
-    setTimeout(()=>{
-        that.props.history.push("/events");
-    },200)
-}
+
     changeMap() {
         console.log("lat:" + this.props.userLat + " lng: " + this.props.userLng);
         if (!this.props.userLat && !this.props.userLat) {
@@ -224,74 +202,21 @@ submitOrganizerUpdate(){
             this.setState(data);
         });
     }
+
     componentDidMount(){
         this.props.updateHomeShow();
         console.log("Form.jsx componentDidMount");
         var that = this;
-        if(this.props.authenticatedWith !== "meetup" ){
         var newAutocomplete = new google.maps.places.Autocomplete((document.getElementById('meshAddress')),
             {types: ['geocode']});
         this.initForm();
-        
         this.props.setAutocomplete(newAutocomplete);
         google.maps.event.addListener(newAutocomplete, 'place_changed',() => {
             that.updateAddress(newAutocomplete);
         });
         this.changeMap();
     }
-    }
-    renderMeshNetwork(){
-        //console.log('mesh netpras')
-        return(
-            <div className="create-mesh-info-form">
-            <div className="row">
-                <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-                    <h3 className="active-mesh-network">Settings:</h3>
-                </div>
-            </div>
-            <form>
-                <div className="row">
-                    <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-                    <label style={{fontStyle:"italic"}}>Default name for all mesh networks:
-                        </label>
-                        </div>
-                        <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-                        <input type="text"
-                            className="form-control"
-                            maxLength={25}
-                            minLength={2}
-                            value={this.state.organizerMeshName} 
-                            onChange={this.organizerMeshNameChangeHandler}
-                            id="organizerMeshName"
-                            placeholder="Example: ABCD Meetup"/>
-                    </div>
-                    </div>
-<div class="row">
-                    <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 form-group">
-                    <label style={{fontStyle:"italic"}}>Best email to contact you on:
-                        </label>
-                        </div>
-                        <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 form-group">
-                        <input type="email"
-                            className="form-control"
-                            maxLength={35}
-                            value={this.state.organizerEmail} 
-                            onChange={this.organizerEmailChangeHandler}
-                            id="organizerEmail"
-                            placeholder="organizer@emal.com"/>
-                    </div>
-                </div>
-                <div className="row">
-                <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 form-group">
-                <a className="btn btn-primary btn-lg pull-right next-btn" onClick={this.submitOrganizerUpdate}>
-                            Submit
-                        </a>
-                    </div>
-                </div>
-            </form>
-        </div>
-        )
-    }
+
     renderForm() {
         return (
             <div className="create-mesh-info-form">
@@ -462,7 +387,7 @@ submitOrganizerUpdate(){
                         this.renderMeshCreatedPage() :
                         (
                             <div>
-                                { this.props.authenticatedWith == "meetup" ? this.renderMeshNetwork() : this.state.showModal ?
+                                {this.state.showModal ?
                                     this.renderEnterInfo() : this.renderForm()}
                             </div>
                         )
