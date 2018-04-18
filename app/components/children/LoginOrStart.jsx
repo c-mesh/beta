@@ -23,6 +23,7 @@ class LoginOrStart extends React.Component {
         this.open1 = this.open1.bind(this);
         this.close2 = this.close2.bind(this);
         this.open2 = this.open2.bind(this);
+        console.log('login or start called')
     }
 
     close1() {
@@ -91,7 +92,7 @@ class LoginOrStart extends React.Component {
                         return {height: screen.height+"px"}
                     })()}>
                     <TermsAndConditions
-                        linkedInUrl="/auth/linkedin/page/form"
+                    linkedInUrl="/auth/linkedin/page/form"
                         logoOnTop={true}/>
                 </div>
             </div>
@@ -153,7 +154,7 @@ class LoginOrStart extends React.Component {
                         <div>
                             <hr style={{visibility: "hidden"}}/>
                             <div className="no-meshes-img-container">
-                                <img style={{margin:"auto"}} className="img img-responsive"
+                                <img style={{margin:"auto"}} class="img img-responsive"
                                     src="/assets/images/no_meshes_sign_img.png"/>
                             </div>
                         </div>
@@ -177,7 +178,6 @@ class LoginOrStart extends React.Component {
     }
 
     render(props) {
-
         var that = this;
         const content = (
             <div className="login-start-page">
@@ -345,7 +345,7 @@ export default withRouter(LoginOrStart);
 //                         (()=>{
 //                             return this.props.showLoader || this.state.showTermsAndCondition?
 //                             null:
-//                             <img style={{margin:"auto"}} className="img img-responsive"
+//                             <img style={{margin:"auto"}} class="img img-responsive"
 //                                     src="/assets/images/no_meshes_sign_img.png"/>
 //                         })()
 //                     }
