@@ -70,9 +70,7 @@ app.use(passport.session());
 
 
 // Database configuration with mongoose and model requires
-var Bookmark = require('./models/Bookmark.js');
 var User = require('./models/User.js');
-var Wave = require('./models/Wave.js');
 var Mesh = require('./models/Mesh.js');
 var EventLog = require('./models/EventLog.js');
 
@@ -146,21 +144,6 @@ app.get('/auth/linkedin/join-mesh/:meshId/:meshName/:meshEndTimeMilliSec', (req,
 ////////////////////////////////////////////////////
 //                  REST API                      //
 ////////////////////////////////////////////////////
-
-// GET /api/bookmark/:id- return bookmarks by user id
-app.get('/api/bookmark/:id', isAuthenticated, (req, res, next) => {
-    var userObj = {};
-    if (!req.isAuthenticated()) {
-        return res.status(401).end();
-    }
-    Bookmark.find({bookmark_owner: req.params.id})
-            .populate('users')
-            .lean()
-            .exec()
-            .then( (bookmark) => {
-        return res.json(bookmark);
-    });
-});
 
 // GET /api/users - return all users
 app.get('/api/users', isAuthenticated, (req, res, next) => {
@@ -402,19 +385,17 @@ app.get('/api/meshes', (req, res, next) => {
     Mesh.find({
         meshStartTimeMilliSec:{$lt: rightNowMilliSec},
         meshEndTimeMilliSec:{$gt: rightNowMilliSec}
-    }).populate("users").lean().exec((err, meshes) => {
+    }).populate("users").exec((err, meshes) => {
         if(err) {
             console.log(err);
             res.status(500).send('Broked getting meshes');
         } else {
-            getUsersMetadata(req, (wave_who, wave_to, bookmarked) => {
-                meshes = meshes.map( (mesh) => {
-                    const validUsers = getValidUsers(mesh, wave_who, wave_to, bookmarked);
-                    mesh.users = validUsers;
-                    return mesh;
-               });
-               res.json(meshes);
+            meshes = meshes.map( (mesh) => {
+                const validUsers = mesh.users.filter((usr)=>usr.acceptedTermsAndConditions);
+                mesh.users = validUsers;
+                return mesh;
             });
+           res.json(meshes);
         }
     });
 });
@@ -424,17 +405,16 @@ app.get('/api/mesh/:id', isAuthenticated, (req, res, next) => {
     if (req.isAuthenticated()) {
         console.log(`getting all other users in mesh ${req.params.id}`);
         Mesh.findById(req.params.id)
-            .populate("users").lean().exec((err, mesh) => {
+            .populate("users").exec((err, mesh) => {
             if (err) {
                 console.log(err);
                 res.status(500).send('Get other users in mesh broke');
             } else {
                 if(mesh){
-                    getMeshUsers(mesh, req, (validUsers) => {
-                        mesh.users = validUsers;
-                        res.json(mesh);
-                    });
+                    const validUsers = mesh.users.filter((usr)=>usr.acceptedTermsAndConditions);
+                    mesh.users = validUsers;
                 }
+                res.json(mesh);
             }
         });
     } else res.status(401).end();
@@ -487,47 +467,6 @@ app.get('/api/mesh/:id/users', isAuthenticated, (req, res, next) => {
     } else res.status(401).end();
 });
 
-// POST /api/bookmark/ - Bookmark a user
-app.post('/api/bookmark', isAuthenticated, (req, res, next) => {
-    if (!req.isAuthenticated()) {
-        return res.status(401).end();
-    }
-    User.findById(req.body.person_id, (err, user) => {
-        Bookmark.update({bookmark_owner: req.user._id}, {$addToSet: {users: user}, bookmark_owner: req.user._id}, {upsert: true}, function (err) {
-            console.log("Bookmark added " + err);
-            res.json({});
-        });
-    });
-});
-
-// DELETE /api/bookmark/ - Delete a bookmarked user
-app.delete('/api/bookmark', isAuthenticated, (req, res, next) => {
-    if (!req.isAuthenticated()) {
-        return res.status(401).end();
-    }
-    User.findById(req.body.person_id, (err, user) => {
-        Bookmark.update({bookmark_owner: req.user._id}, {$pull: {users: user._id} }, function (err, bookmark) {
-            console.log("Bookmark removed, error: " + err);
-            console.log(bookmark);
-            res.json({});
-        });
-    });
-});
-
-// POST /api/wave/ - Wave to a user
-app.post('/api/wave', isAuthenticated, (req, res, next) => {
-    if (!req.isAuthenticated()) {
-        return res.status(401).end();
-    }
-    let waveWho = req.user._id;
-    let waveTo = req.body.wave_to;
-
-    Wave.create({
-        wave_who: waveWho,
-        wave_to: waveTo
-    })
-});
-
 //POST /api/user/:id/activity - Log user activity
 app.post('/api/browserActive', isAuthenticated, (req, res, next) => {
     let userId = req.user._id;
@@ -541,8 +480,6 @@ app.post('/api/browserActive', isAuthenticated, (req, res, next) => {
         type: type,
         timestamp: timeStamp
     })
-    res.json({});
-
 });
 
 app.post('/api/browserInactive', isAuthenticated, (req, res, next) => {
@@ -557,7 +494,6 @@ app.post('/api/browserInactive', isAuthenticated, (req, res, next) => {
         type: type,
         timestamp: timeStamp
     })
-    res.json({});
 });
 
 app.post('/api/profileViewed', isAuthenticated, (req, res, next) => {
@@ -634,6 +570,7 @@ app.get('/api/loggedin', (req, res) => {
 app.get('/web', function(req, res){
     res.sendFile(path.join(__dirname+'/public/web.html'));
 });
+
 // Redirect
 app.get('*', function(request, response) {
     console.log('Showing index page!');
@@ -654,54 +591,3 @@ function isAuthenticated(req, res, next) {
         res.redirect('/');
     }
 }
-
-function getUsersMetadata(req, callback) {
-    if (!req.user) {
-        callback([], [], []);
-        return;
-    }
-    const userId = req.user._id;
-    Wave.find({
-        wave_who: userId
-    }, (err, wave_to) => {
-        Wave.find({
-            wave_to: userId
-        }, (err, wave_who) => {
-            Bookmark.findOne({bookmark_owner: req.user._id}, (err, bookmark) => {
-                callback(wave_who.map((w)=>{return w.wave_who}),
-                         wave_to.map((w)=>{return w.wave_to}),
-                         bookmark ? bookmark.users : [])
-            });
-        });
-    });
-    
-}
-
-function contains(arr, val) {
-    var l = arr.length;
-    for (var i = 0; i < l; i++) {
-        if (arr[i] == val || Object.is(arr[i], val) || Object.is(JSON.stringify(arr[i]), JSON.stringify(val))) {
-            return true;
-        }
-    }
-    return false;
-}
-
-// wave_who - who waved to a current user
-// wave_to - whom current user waved 
-function getValidUsers(mesh, wave_who, wave_to, bookmarked) {
-    var validUsers = mesh.users.filter((usr)=>usr.acceptedTermsAndConditions);
-    validUsers.forEach(function(user, index, array) {
-        user.wave_out = contains(wave_who, user._id);
-        user.wave_in = contains(wave_to, user._id);
-        user.bookmarked = contains(bookmarked, user._id);
-    });
-    return validUsers;
-}
-
-function getMeshUsers(mesh, req, completion) {
-    getUsersMetadata(req, (wave_who, wave_to, bookmarked) => {
-        completion(getValidUsers(mesh, wave_who, wave_to, bookmarked));
-    });
-}
-

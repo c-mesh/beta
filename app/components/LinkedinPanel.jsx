@@ -1,57 +1,49 @@
-import React from 'react';
-import PersonPanel from './PersonPanel.jsx'
+import React,{Component} from 'react';
 import axios from "axios/index";
-import ReactGA from 'react-ga';
 
-// TODO: refactor
-class LinkedinPanel extends PersonPanel {
+class LinkedinPanel extends Component {
 
     constructor(props) {
         super(props);
         this.updateUserProfileView = this.updateUserProfileView.bind(this);
-        this.state = {
-            bookmarked: props.bookmarked
-        }
     }
 
-    bookmarkClick() {
-        let request = {
-            person_id: this.props.userId
-        }
-
-        if (this.state.bookmarked) {
-            ReactGA.event({category: 'Bookmark', action: 'Delete'})
-            axios.delete(`/api/bookmark`, {data: {person_id: this.props.userId }}).then((result)=>{
-                console.info(result);
-            });
-        } else {
-            ReactGA.event({category: 'Bookmark', action: 'Add'})
-            axios.post(`/api/bookmark`, request).then((result)=>{
-                console.info(result);
-            });
-        }
-
-        this.setState({bookmarked: !this.state.bookmarked})
-    }
-
-    renderBookmarkButton() {
-        return (
-            <img onClick={() => this.bookmarkClick()} className="bookmark" src={this.state.bookmarked ? "/assets/images/bookmark_selected.png" : "/assets/images/bookmark.png"}/>
-        )
-    }
-
-    updateUserProfileView() {
-        super.updateUserProfileView()
-        console.log("Linkedin:updateUserProfileView with mesh id " + this.props.meshId)
+    updateUserProfileView(userId, meshId) {
         let data = {
-            viewedUserId: this.props.userId,
-            meshId: this.props.meshId,
+            viewedUserId: userId,
+            meshId: meshId,
             timestamp: Date.now(),
             activityType: "viewedLinkedinProfile"
         }
         axios.post(`/api/profileViewed`, data).then((result)=>{
             console.info("response for profile view");
         });
+    }
+
+    render(){
+        const userId = this.props.userId;
+        const getUrl = window.location;
+        const meshId = this.props.meshId;
+        const baseUrl = getUrl .protocol + "//" + getUrl.host + "/";
+        const name = this.props.firstName +" "+
+        (this.props.lastName ? this.props.lastName.toUpperCase().charAt(0)+"." : "")
+        return(
+        <div className="panel">
+            <div className="panel-body">
+                <div className="avatar">
+                    <img src={this.props.photo} className="img-circle"/>
+                </div>
+                <div className="desc">
+                    <div className="full-name">{name}</div>
+                    <div className="job">{this.props.job}</div>
+                    <a href={this.props.linkedinURL} target="_blank" onClick={() => this.updateUserProfileView(userId, meshId)}>
+                        <img className="img img-responsive" src={baseUrl+"assets/images/view_linkedin.png"}
+                        width="70" height="70"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+        )
     }
 }
 

@@ -10,7 +10,6 @@ import PlusButton from '../PlusButton.jsx';
 import ContactUs from '../ContactUs.jsx';
 import TermsAndConditions from '../TermsAndConditions.jsx';
 import FeedbackBtn from '../Feedback.jsx';
-import PersonPanel from '../PersonPanel.jsx';
 
 class LoginOrStart extends React.Component {
     constructor(props){
@@ -122,45 +121,6 @@ class LoginOrStart extends React.Component {
         )
     }
 
-    renderBookmarksTitle() {
-        return (
-            <h3 className="active-mesh-network">Bookmarks</h3>
-        )
-    }
-
-    renderBookmarks(props) {
-        const that = this;
-        if (!this.props.bookmarks  || !this.props.bookmarks.users || this.props.bookmarks.users.length == 0) {
-            return (
-                <div>
-                { this.renderBookmarksTitle() }
-                <b>Your bookmarks are empty.<p/>Add bookmarks using <img src="/assets/images/bookmark.png" className="bookmark-inline"/> button.</b>
-                </div>
-            )
-        }
-        return(
-            <div>
-                { this.renderBookmarksTitle() }
-                { 
-                    this.props.bookmarks.users.map((v, i) => {
-                    return (
-                        <div key={i}>
-                                <PersonPanel photo={v.photo}
-                                    fullName={v.fullName}
-                                    job={v.job}
-                                    firstName={v.firstName}
-                                    lastName={v.lastName}
-                                    linkedinURL={v.linkedinURL}
-                                    userId={v._id}
-                                    meshId={this.props.currentMeshID}/>
-                        </div>
-                        );
-                    })
-                }
-            </div>
-        )
-    }
-
     renderMeshes() {
         const that = this;
         return(
@@ -232,7 +192,6 @@ class LoginOrStart extends React.Component {
                             return (<div className="container page-content"
                                 style={{overflow:"auto", minHeight: (screen.height)+"px"}}>
                                     {this.renderShowMeshesPage()}
-                                    {this.renderBookmarks()}
                                     {this.state.showTermsAndCondition ? null : <ContactUs/>}
                             </div>)
                         }

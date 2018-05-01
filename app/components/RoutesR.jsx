@@ -25,7 +25,6 @@ class Routes extends React.Component {
             photo: '',
             linkedinURL: '',
             meshes: [],
-            bookmarks: [],
             currentMeshID: '',
             currentMeshName: '',
             currentCoordinate: { lng: 0, lat: 0 },
@@ -155,16 +154,6 @@ class Routes extends React.Component {
         //TODO: add this user to mesh via Mongoose
     }
 
-    getAllBookmarks() {
-        if (!this.state.isHomeShow || !this.state.userId) {
-            return
-        }
-        var that = this;
-        axios.get(`/api/bookmark/${that.state.userId}`).then((result) => {
-            var bookmarks = result.data[0];
-            that.setState({ bookmarks: bookmarks});
-        });
-    }
     getAllMeshes() {
         if (!this.state.isHomeShow) {
             return
@@ -245,7 +234,6 @@ class Routes extends React.Component {
         this.setState({ showLoader: true }, () => {
             that.meshesTimer = setInterval(function () {
                 that.getAllMeshes();
-                that.getAllBookmarks();
             }, 6000);
         });
 
@@ -319,7 +307,6 @@ class Routes extends React.Component {
                             updateUser={this.updateUser}
                             isUserLogged={this.state.isUserLogged}
                             meshes={this.state.meshes}
-                            bookmarks={this.state.bookmarks}
                             username={this.state.username}
                             currentMesh={this.state.currentMesh}
                             joinCurrentMesh={this.joinCurrentMesh}
