@@ -9,6 +9,7 @@ import LoginOrStart from './children/LoginOrStart.jsx';
 import Form from './children/Form.jsx';
 import Mesh from './children/Mesh.jsx';
 import LocationInstructions from './children/LocationInstructions.jsx';
+import Instructions from './children/Instructions.jsx';
 import Analytics from './children/Analytics.jsx';
 import $ from 'jquery';
 import { withRouter } from "react-router-dom";
@@ -354,6 +355,11 @@ class Routes extends React.Component {
                         />
                     )} />
 
+                    {/* new instructions
+                    route */}
+                    <Route path="/instructions" render={(props) => (
+                        <Instructions />
+                    )} />
                 </Switch>
             </div>
         )

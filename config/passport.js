@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 var LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 var User = require('../models/User.js');
 
@@ -16,6 +18,7 @@ var passport = function(passport) {
         clientID: process.env.LINKEDIN_CLIENT_ID,
         clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
         callbackURL: process.env.CALLBACK_URL,
+        proxy: true,
             scope: ['r_emailaddress', 'r_basicprofile'],
         },
         function(accessToken, refreshToken, profile, done) {

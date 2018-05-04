@@ -68,8 +68,9 @@ class LocationInstructions extends React.Component {
     isIOS() {
         return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     }
-
-    renderLocationServiceExplain() {
+    
+    renderLocationServiceMessage() {
+        var baseUrl = getUrl .protocol + "//" + getUrl.host + "/";
         var browserName = this.browserName()
         return(
             <div className="location-service-explain">
@@ -80,21 +81,32 @@ class LocationInstructions extends React.Component {
                 This {browserName} does not have an access to location services
            </h2>
            <div className="nowrap">
-           <img src={"/assets/images/location_service_disabled_" + browserName.toLowerCase() + ".jpg"} className="browser-pic"/>
+           {
+            this.isIOS() == "Unknown browser" ?
+            <img src={"/assets/images/default-error.png"} className="browser-pic"/>
+            :
+            <img src={"/assets/images/location_service_disabled_" + browserName.toLowerCase() + ".jpg"} className="browser-pic"/>
+           }
             
             <h2 className="details">
-                CicleMesh requires access to location to find events near you.
+                <b>Note: </b>CicleMesh requires access to location to find events near you.
             <hr/>
             <b>Please Confirm If</b>
             <ul>
                 <li>Location services are turned <b>ON</b> & </li>
                 <li><b>{browserName}</b> has access to location services</li>
             </ul>
+            <div className="link-instructions">
+                <a href={baseUrl + "/instructions"}>See instructions ></a>
+           </div>
            </h2>
             </div>
             <p/>
-
-            To enable location:
+            <div className="button-button">
+                <button className="btn-btn-one"><a href="email:team@circlemesh.com"></a>Report Error</button>
+                <button className="btn-btn-two"><a href={baseUrl}></a>Done</button>
+            </div>
+            {/* To enable location:
             {
                 this.isIOS() ?
                     <div className="instructions">
@@ -117,14 +129,14 @@ class LocationInstructions extends React.Component {
                     <li>Turn location services: <b>ON</b></li></ul>
                     </div>
 
-            }
+            } */}
 
            </div>
         )
     }
   
     render(props) {
-        return this.renderLocationServiceExplain()
+        return this.renderLocationServiceMessage()
     }
 }
 
