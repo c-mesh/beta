@@ -573,7 +573,7 @@ app.get('/web', function(req, res){
     res.sendFile(path.join(__dirname+'/public/web.html'));
 });
 
-// Redirect
+//Redirect
 app.get('*', function(request, response) {
     console.log('Showing index page!');
     response.redirect('/');

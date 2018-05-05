@@ -70,16 +70,16 @@ class Instructions extends React.Component {
         return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     }
 
-    renderLocationServiceExplain() {
+    renderLocationServiceExp() {
+        const getUrl = window.location;
         var baseUrl = getUrl .protocol + "//" + getUrl.host + "/";
         var browserName = this.browserName()
         return(
             <div className="location-service">
-            To enable location:
             {
                 this.isIOS() ?
                     <div className="instructions">
-                    <h2>Please select your device</h2>
+                    <h2>For your IOS phone</h2>
                     <div className="phone-img">
                         <img src="/assets/images/iosLogo.png" className="ios-phone"></img>
                         <img src="/assets/images/androidLogo.png" className="android"></img>
@@ -98,33 +98,36 @@ class Instructions extends React.Component {
                     </div>
                     :
                     <div>
-                    <h2>Please select your device</h2>
-                    <div className="phone-img">
-                        <img src="/assets/images/iosLogo.png" className="ios"></img>
-                        <img src="/assets/images/androidLogo.png" className="android-phone"></img>
-                    </div>
-                    <h2>Step 1</h2>
-                    <ul><li>Settings > Apps</li></ul>
-                    <h2>Step 2</h2>
-                    <ul><li>Select your browser app ({browserName})</li></ul>
-                    <h2>Step 3</h2>
-                    <ul><li>Browser app > permissions</li>
-                    <li>Turn location services: <b>ON</b></li></ul>
-                    <div className="button-button">
-                    <button className="btn-btn-one"><a href="email:team@circlemesh.com"></a>Report Error</button>
-                        <button className="btn-btn-two"><a href={baseUrl}></a>Done</button>
-                    </div>
+                        <h2>For your Android phone</h2>
+                        <div className="phone-img">
+                            <img src="/assets/images/iosLogo.png" className="ios"></img>
+                            <img src="/assets/images/androidLogo.png" className="android-phone"></img>
+                        </div>
+                        <h2>Step 1</h2>
+                        <ul><li><h4>Settings > Apps</h4></li></ul>
+                        <h2>Step 2</h2>
+                        <ul><li><h4>Select your browser app ({browserName})</h4></li></ul>
+                        <h2>Step 3</h2>
+                        <ul><li><h4>Browser app > permissions</h4></li>
+                        <li><h4>Turn location services: <b>ON</b></h4></li></ul>
                     </div>
 
             }
-
+            <div className="button-button-instruction">
+                <a className="btn-btn-one"><Link to="mailto:team@circlemesh.com"></Link>Report Error</a>
+                <a className="btn-btn-two"><Link to={baseUrl}></Link>Done</a>
+            </div>
+            <hr/>
+                <div className="contact-instruction">
+                    <p>contact us</p>
+                </div>
            </div>
         )
     }
   
     render(props) {
-        return this.renderLocationServiceExplain()
+        return this.renderLocationServiceExp()
     }
 }
 
-export default withRouter(LocationInstructions);
+export default withRouter(Instructions);

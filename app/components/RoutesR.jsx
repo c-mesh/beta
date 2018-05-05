@@ -267,7 +267,7 @@ class Routes extends React.Component {
 
             }, function (err) {
                 console.log('Location disabled');
-                that.props.history.push('/location_instructions')
+                that.props.history.push('/location_instructions') && that.props.history.push('/instructions')
             });
     }
 

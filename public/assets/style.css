@@ -56,6 +56,7 @@ body {
     margin-left: 10px;
     max-width: 25%;
     height: 200px;
+    margin-top: 25px;
 }
 
 .location-service-explain .instructions ul,
@@ -738,4 +739,124 @@ input[type=date]::-webkit-inner-spin-button {
 .panel-logo img{
     height: 100%;
     width: 100%;
+}
+
+.location-service-explain{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.location-header{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    height: 150px;
+    width: 330px;
+    color: white;
+    background-color: rgb(65, 65, 65);
+    font-family: Helvetica;
+    border-radius: 20px; 
+}
+
+.location-title{
+    font-family: Helvetica;
+    height: 50%;
+    width: auto;
+}
+
+.location-service-explain .issue {
+    font-size: 20px;
+    margin-top: -30px;
+    text-align: center;
+}
+
+.detail-inst{
+    color: red;
+}
+
+.button-button{
+    display: flex;
+}
+.button-button-instruction{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+}
+
+.link-instructions{
+    margin-bottom: -50px;
+}
+
+.contact-instruction{
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.hr-instr{
+    margin-top: 80px;
+}
+
+.btn-btn-one{
+    color: rgb(54, 51, 51);
+    text-decoration:none !important;
+    background-color: white;
+    font-family: Helvetica;
+    font-size: 2rem;
+    cursor: pointer;
+    width: 20rem;
+    margin-right: 5px;
+    border-radius: 8px;
+    height: 40px;
+    border: 1px solid rgb(54, 51, 51);
+    position: relative;
+    text-align: center;
+    padding: 0.5rem 0;
+}
+
+.btn-btn-two{
+    color: white !important;
+    text-decoration:none !important;
+    background-color: rgb(66, 66, 66);
+    font-family: Helvetica;
+    font-size: 2rem;
+    cursor: pointer;
+    width: 20rem;
+    margin-left: 5px;
+    border-radius: 8px;
+    height: 40px;
+    position: relative;
+    text-align: center;
+    padding: 0.5rem 0;
+}
+
+.location-service{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center
+}
+
+.phone-img{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center
+}
+
+.ios{
+    height: 120px;
+    width: 120px;
+}
+
+.android-phone{
+    height: 120px;
+    width: 120px;
 }

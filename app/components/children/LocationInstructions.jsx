@@ -70,66 +70,58 @@ class LocationInstructions extends React.Component {
     }
     
     renderLocationServiceMessage() {
+        const getUrl = window.location;
         var baseUrl = getUrl .protocol + "//" + getUrl.host + "/";
         var browserName = this.browserName()
         return(
             <div className="location-service-explain">
-            <h1 className="title">
-                Ooops!
-            </h1>
-            <h2 className="issue">
-                This {browserName} does not have an access to location services
-           </h2>
-           <div className="nowrap">
-           {
-            this.isIOS() == "Unknown browser" ?
-            <img src={"/assets/images/default-error.png"} className="browser-pic"/>
-            :
-            <img src={"/assets/images/location_service_disabled_" + browserName.toLowerCase() + ".jpg"} className="browser-pic"/>
-           }
-            
-            <h2 className="details">
-                <b>Note: </b>CicleMesh requires access to location to find events near you.
-            <hr/>
-            <b>Please Confirm If</b>
-            <ul>
-                <li>Location services are turned <b>ON</b> & </li>
-                <li><b>{browserName}</b> has access to location services</li>
-            </ul>
-            <div className="link-instructions">
-                <a href={baseUrl + "/instructions"}>See instructions ></a>
-           </div>
-           </h2>
-            </div>
-            <p/>
-            <div className="button-button">
-                <button className="btn-btn-one"><a href="email:team@circlemesh.com"></a>Report Error</button>
-                <button className="btn-btn-two"><a href={baseUrl}></a>Done</button>
-            </div>
-            {/* To enable location:
-            {
-                this.isIOS() ?
-                    <div className="instructions">
-                    <h2>Step 1</h2>
-                    <ul><li>Settings > Privacy > Location</li></ul>
-                    <h2>Step 2</h2>
-                    <ul><li>Turn location services: <b>ON</b></li></ul>
-                    <h2>Step 3</h2>
-                    <ul><li>Select your browser ({browserName})</li>
-                    <li>Select <b>'While using the app'</b></li></ul>
-                    </div>
+                <div className="location-header">
+                    <h1 className="location-title">
+                        Oops!
+                    </h1>
+                    <h2 className="issue">
+                        This {browserName} does not have an access to location services
+                    </h2>
+                </div>
+                <div className="nowrap">
+                {
+                    this.isIOS() == "Unknown browser" ?
+                    <img src={"/assets/images/default-error.png"} className="browser-pic"/>
                     :
-                    <div>
-                    <h2>Step 1</h2>
-                    <ul><li>Settings > Apps</li></ul>
-                    <h2>Step 2</h2>
-                    <ul><li>Select your browser app ({browserName})</li></ul>
-                    <h2>Step 3</h2>
-                    <ul><li>Browser app > permissions</li>
-                    <li>Turn location services: <b>ON</b></li></ul>
+                    <img src={"/assets/images/location_service_disabled_" + browserName.toLowerCase() + ".jpg"} className="browser-pic"/>
+                }
+                    
+                <h2 className="details">
+                    <div className="detail-inst">
+                        <b>Note: </b>CicleMesh requires access to location to find events near you.
                     </div>
+                <hr/>
+                <b>Please Confirm If</b>
+                <ul>
+                    <li>Location services are turned <b>ON</b> & </li>
+                    <li><b>{browserName}</b> has access to location services</li>
+                </ul>
+                <div className="link-instructions">
+                    <Link to={"instructions"}>See instructions ></Link>
+                </div>
+                </h2>
+                <hr/>
 
-            } */}
+                <p/>
+                <div className="button-button">
+                    <a className="btn-btn-one"><Link to="mailto:team@circlemesh.com"></Link>Report Error</a>
+                    <a className="btn-btn-two"><Link to={baseUrl}></Link>Done</a>
+                </div>
+
+                <div className="hr-instr">
+                    <hr/>
+                </div>
+                    <div className="contact-instruction">
+                        <p>contact us</p>
+                    </div>
+                </div>
+                    
+
 
            </div>
         )
