@@ -12,7 +12,7 @@ var LocationLogUserSchema = new Schema({
         type: String
     },
     status: {
-        type: number
+        type: Number
     }
 });
 
