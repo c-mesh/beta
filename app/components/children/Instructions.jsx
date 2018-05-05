@@ -79,18 +79,28 @@ class Instructions extends React.Component {
             {
                 this.isIOS() ?
                     <div className="instructions">
-                    <h2>For your IOS phone</h2>
-                    <div className="phone-img">
-                        <img src="/assets/images/iosLogo.png" className="ios-phone"></img>
-                        <img src="/assets/images/androidLogo.png" className="android"></img>
+                    <div className="instruction-head">
+                        <h4><b>For your IOS phone</b></h4>
                     </div>
-                    <h2>Step 1</h2>
-                    <ul><li>-Settings > Privacy > Location</li></ul>
-                    <h2>Step 2</h2>
-                    <ul><li>-Turn location services: <b>ON</b></li></ul>
-                    <h2>Step 3</h2>
-                    <ul><li>-Select your browser ({browserName})</li>
-                    <li>-Select <b>'While using the app'</b></li></ul>
+                    <div className="phone-img">
+                        <div className="ios-phone-space">
+                            <img src="/assets/images/iosLogo.png" className="ios-phone"></img>
+                            <h4><b>iOS</b></h4>
+                        </div>
+                        <div className="android-phone-space">
+                            <img src="/assets/images/androidLogo.png" className="android"></img>
+                            <h4><b>Android</b></h4>
+                        </div>
+                    </div>
+                    <div className="instruction-text">
+                        <h2>Step 1</h2>
+                        <ul><li>-Settings > Privacy > Location</li></ul>
+                        <h2>Step 2</h2>
+                        <ul><li>-Turn location services: <b>ON</b></li></ul>
+                        <h2>Step 3</h2>
+                        <ul><li>-Select your browser app, such as chrome, firefox, etc.</li>
+                        <li>-Select <b>'While using the app'</b></li></ul>
+                    </div>
                     <div className="button-button">
                     <button className="btn-btn-one"><a href="email:team@circlemesh.com"></a>Report Error</button>
                         <button className="btn-btn-two"><a href={baseUrl}></a>Done</button>
@@ -98,18 +108,28 @@ class Instructions extends React.Component {
                     </div>
                     :
                     <div>
-                        <h2>For your Android phone</h2>
-                        <div className="phone-img">
-                            <img src="/assets/images/iosLogo.png" className="ios"></img>
-                            <img src="/assets/images/androidLogo.png" className="android-phone"></img>
+                        <div className="instruction-head">
+                            <h4><b>For your Android phone</b></h4>
                         </div>
-                        <h2>Step 1</h2>
-                        <ul><li><h4>Settings > Apps</h4></li></ul>
-                        <h2>Step 2</h2>
-                        <ul><li><h4>Select your browser app ({browserName})</h4></li></ul>
-                        <h2>Step 3</h2>
-                        <ul><li><h4>Browser app > permissions</h4></li>
-                        <li><h4>Turn location services: <b>ON</b></h4></li></ul>
+                        <div className="phone-img">
+                            <div className="ios-space">
+                                <img src="/assets/images/iosLogo.png" className="ios"></img>
+                                <h4><b>iOS</b></h4>
+                            </div>
+                            <div className="android-space">
+                                <img src="/assets/images/androidLogo.png" className="android-phone"></img>
+                                <h4><b>Android</b></h4>
+                            </div>
+                        </div>
+                            <div className="instruction-text">
+                                <h2>Step 1</h2>
+                                <ul><li><h4>Settings > Apps</h4></li></ul>
+                                <h2>Step 2</h2>
+                                <ul><li><h4>Select your browser app, such as chrome, firefox, etc.</h4></li></ul>
+                                <h2>Step 3</h2>
+                                <ul><li><h4>Browser app > permissions</h4></li>
+                                <li><h4>Turn location services: <b>ON</b></h4></li></ul>
+                            </div>
                     </div>
 
             }
@@ -118,6 +138,7 @@ class Instructions extends React.Component {
                 <a className="btn-btn-two"><Link to={baseUrl}></Link>Done</a>
             </div>
             <hr/>
+            
                 <div className="contact-instruction">
                     <p>contact us</p>
                 </div>
