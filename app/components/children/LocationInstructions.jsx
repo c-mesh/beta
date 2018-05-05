@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import {withRouter} from "react-router-dom";
 import history from '../../history.js';
 import { Button, Modal } from 'react-bootstrap';
+import moment from 'moment';
 
 class LocationInstructions extends React.Component {
     constructor(props){
@@ -69,6 +70,96 @@ class LocationInstructions extends React.Component {
         return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     }
     
+    locationErrorlogs() {
+        var payloadData = {};
+        var browserName = this.browserName();
+        var timestamp = moment().format('MMMM Do YYYY, h:mm:ss a')
+
+        function getIp() {
+            fetch('https://api.ipify.org?format=json')
+            .then((resp) => resp.json)
+            .then((response) => {
+                return response
+            }).catch(function (err) {
+                console.log('Error getting IP from the API')
+            })
+        }
+
+        window.addEventListener('load', function(){
+            payloadData.ip = this.getIp();
+            payloadData.deviceName = window.navigator.platform;
+            payloadData.OS = navigator.userAgent;
+            payloadData.browser = browserName;
+            payloadData.timestamp = timestamp;
+
+            let apiURL = '/api/locationErrorLogs';
+            fetch(apiURL, {
+                method: 'POST',
+                headers : new Headers(),
+                body: JSON.stringify(payloadData)
+            }).then((response) => {
+                console.log('Response from API', response)
+            }).catch((err) => {
+                console.log(err)
+            })
+        });
+    }
+    locationErrorlogs()
+    locationErrorUsers(){
+        var payloadData = {};
+        var browserName = this.browserName();
+        var timestamp = moment().format('MMMM Do YYYY, h:mm:ss a')
+
+        function getIp() {
+            fetch('https://api.ipify.org?format=json')
+            .then((resp) => resp.json)
+            .then((response) => {
+                return response
+            }).catch(function (err) {
+                console.log('Error getting IP from the API')
+            })
+        }
+
+        window.addEventListener('load', function(){
+            payloadData.ip = this.getIp();
+            payloadData.firstVisit0n = timestamp;
+            payloadData.status = 0;
+
+
+            let apiURL = '/api/locationUserLogs';
+            fetch(apiURL, {
+                method: 'POST',
+                headers : new Headers(),
+                body: JSON.stringify(payloadData)
+            }).then((response) => {
+                console.log('Response from API', response)
+            }).catch((err) => {
+                console.log(err)
+            })
+        });
+    }
+
+    locationErrorUsers();
+
+    UpdateLocationErrorUsers(){
+        var timestamp = moment().format('MMMM Do YYYY, h:mm:ss a')
+        var payloadData = {};
+        payloadData.ip = this.getIp();
+        payloadData.status = 1;
+        payloadData.resolvedOn = timestamp;
+
+
+        let apiURL = '/api/updateLocationUserLogs'
+        fetch(apiURL, {
+            method: 'PUT',
+            headers : new Headers(),
+            body: JSON.stringify(payloadData)
+        }).then((response) => {
+            console.log('Response from API', response)
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
     renderLocationServiceMessage() {
         const getUrl = window.location;
         var baseUrl = getUrl .protocol + "//" + getUrl.host + "/";
@@ -110,7 +201,7 @@ class LocationInstructions extends React.Component {
                 <p/>
                 <div className="button-button">
                     <a className="btn-btn-one"><Link to="mailto:team@circlemesh.com"></Link>Report Error</a>
-                    <a className="btn-btn-two"><Link to={baseUrl}></Link>Done</a>
+                    <a onclick={this.UpdateLocationErrorUsers()} className="btn-btn-two"><Link to={baseUrl}></Link>Done</a>
                 </div>
 
                 <div className="hr-instr">

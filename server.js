@@ -75,6 +75,8 @@ app.use(passport.session());
 var User = require('./models/User.js');
 var Mesh = require('./models/Mesh.js');
 var EventLog = require('./models/EventLog.js');
+var LocationErrorLogs = require('./models/locationErrorLog');
+var LocationUserLogs = require('./models/LocationUserLog');
 
 // Database logic
 mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true });
@@ -558,6 +560,56 @@ app.post('/api/meshLeaveOn',isAuthenticated, (req, res, next) => {
         timestamp: timeStamp
     })
 })
+
+// POST LOCATION ERROR LOGS
+app.post('/api/locationErrorLogs', (req, res, next) => {
+    let ip = req.body.ip;
+    let deviceName = req.body.deviceName;
+    let OS = req.body.OS;
+    let browser = req.body.browser;
+    let timestamp = req.body.timestamp;
+
+    LocationErrorLogs.create({
+        ip: ip,
+        deviceName: deviceName,
+        OS: OS,
+        browser: browser,
+        timestamp: timestamp
+    })
+    next();
+})
+
+// POST LOCATION USER LOGS
+app.post('/api/locationUserLogs', (req, res, next) => {
+    let ip = req.body.ip;
+    let status = req.body.status;
+    let firstVisitOn = req.body.firstVisitOn;
+
+    LocationUserLogs.create({
+        ip: ip,
+        status: status,
+        firstVisitOn: firstVisitOn
+    })
+    next();
+})
+
+// UPDATE LOCATION USER LOGS
+app.put('/api/updateLocationUserLogs', (req, res, next) => {
+    let data = req.body;
+    let query = { ip: data.ip }
+    LocationUserLogs.findOneAndUpdate(query, { $set: {
+        status: data.status,
+        resolvedOn: data.resolvedOn,
+        ip: data.ip
+    }}, { new: true })
+    .then((data) => {
+        console.log('Updated sucessfully')
+    }).catch((err) => {
+        console.log('Unable to update')
+    });
+
+    next();
+});
 
 // GET /api/loggedin - Check if a user is authenticated
 app.get('/api/loggedin', (req, res) => {
