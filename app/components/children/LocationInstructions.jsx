@@ -7,8 +7,9 @@ import { Button, Modal } from 'react-bootstrap';
 import moment from 'moment';
 
 class LocationInstructions extends React.Component {
-    constructor(props){
+    constructor(props, myIp){
         super(props);
+        this.myIp = myIp;
     }
 
     browserName() {
@@ -70,23 +71,21 @@ class LocationInstructions extends React.Component {
         return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     }
     
+    getIp() {
+        return fetch('https://api.ipify.org?format=json')
+        .then((resp) => resp.json())
+        .then((response) => {
+            return this.myIp = response;
+        }).catch(function (err) {
+        })
+    }
+
     locationErrorlogs() {
         var payloadData = {};
         var browserName = this.browserName();
         var timestamp = moment().format('MMMM Do YYYY, h:mm:ss a')
 
-        function getIp() {
-            fetch('https://api.ipify.org?format=json')
-            .then((resp) => resp.json)
-            .then((response) => {
-                return response
-            }).catch(function (err) {
-                console.log('Error getting IP from the API')
-            })
-        }
-
-        window.addEventListener('load', function(){
-            payloadData.ip = this.getIp();
+            payloadData.ip = this.myIp;
             payloadData.deviceName = window.navigator.platform;
             payloadData.OS = navigator.userAgent;
             payloadData.browser = browserName;
@@ -98,33 +97,18 @@ class LocationInstructions extends React.Component {
                 headers : new Headers(),
                 body: JSON.stringify(payloadData)
             }).then((response) => {
-                console.log('Response from API', response)
             }).catch((err) => {
-                console.log(err)
             })
-        });
     }
-    locationErrorlogs()
+    //locationErrorlogs()
     locationErrorUsers(){
         var payloadData = {};
         var browserName = this.browserName();
         var timestamp = moment().format('MMMM Do YYYY, h:mm:ss a')
 
-        function getIp() {
-            fetch('https://api.ipify.org?format=json')
-            .then((resp) => resp.json)
-            .then((response) => {
-                return response
-            }).catch(function (err) {
-                console.log('Error getting IP from the API')
-            })
-        }
-
-        window.addEventListener('load', function(){
-            payloadData.ip = this.getIp();
+            payloadData.ip = this.myIp
             payloadData.firstVisit0n = timestamp;
             payloadData.status = 0;
-
 
             let apiURL = '/api/locationUserLogs';
             fetch(apiURL, {
@@ -132,22 +116,18 @@ class LocationInstructions extends React.Component {
                 headers : new Headers(),
                 body: JSON.stringify(payloadData)
             }).then((response) => {
-                console.log('Response from API', response)
             }).catch((err) => {
-                console.log(err)
             })
-        });
     }
 
-    locationErrorUsers();
+    //locationErrorUsers();
 
     UpdateLocationErrorUsers(){
         var timestamp = moment().format('MMMM Do YYYY, h:mm:ss a')
         var payloadData = {};
-        payloadData.ip = this.getIp();
+        payloadData.ip = this.myIp
         payloadData.status = 1;
         payloadData.resolvedOn = timestamp;
-
 
         let apiURL = '/api/updateLocationUserLogs'
         fetch(apiURL, {
@@ -155,12 +135,12 @@ class LocationInstructions extends React.Component {
             headers : new Headers(),
             body: JSON.stringify(payloadData)
         }).then((response) => {
-            console.log('Response from API', response)
         }).catch((err) => {
-            console.log(err)
         })
     }
     renderLocationServiceMessage() {
+        this.locationErrorlogs();
+        this.locationErrorUsers();
         const getUrl = window.location;
         var baseUrl = getUrl .protocol + "//" + getUrl.host + "/";
         var browserName = this.browserName()
@@ -200,8 +180,8 @@ class LocationInstructions extends React.Component {
 
                 <p/>
                 <div className="button-button">
-                    <a className="btn-btn-one"><Link to="mailto:team@circlemesh.com"></Link>Report Error</a>
-                    <a onclick={this.UpdateLocationErrorUsers()} className="btn-btn-two"><Link to={baseUrl}></Link>Done</a>
+                    <Link to="mailto:team@circlemesh.com" className="btn-btn-one">Report Error</Link>
+                    <Link to="/" onClick={this.UpdateLocationErrorUsers()} className="btn-btn-two">Done</Link>
                 </div>
 
                 <div className="hr-instr">

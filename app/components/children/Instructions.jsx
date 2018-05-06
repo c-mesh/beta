@@ -134,8 +134,8 @@ class Instructions extends React.Component {
 
             }
             <div className="button-button-instruction">
-                <a className="btn-btn-one"><Link to="mailto:team@circlemesh.com"></Link>Report Error</a>
-                <a className="btn-btn-two"><Link to={baseUrl}></Link>Done</a>
+            <Link to="mailto:team@circlemesh.com" className="btn-btn-one">Report Error</Link>
+            <Link to="/" className="btn-btn-two">Done</Link>
             </div>
             <hr/>
             
