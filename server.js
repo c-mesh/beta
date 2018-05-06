@@ -616,6 +616,7 @@ app.post('/api/locationUserLogs', (req, res) => {
     })
 })
 
+
 // UPDATE LOCATION USER LOGS
 app.put('/api/updateLocationUserLogs', (req, res) => {
     let data = req.body;
