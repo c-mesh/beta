@@ -6,12 +6,13 @@ module.exports = {
         publicPath: "/"
     },
     plugins: [
-        new webpack.optimize.OccurenceOrderPlugin(),
+        new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.optimize.UglifyJsPlugin({
             compressor: {
             warnings: false
             }
-        })
+        }),
+        new webpack.optimize.AggressiveMergingPlugin()
     ],
     module: {
         loaders: [{
@@ -26,7 +27,7 @@ module.exports = {
               loader: ['style-loader', 'css-loader']
         }]
     },
-    devtool: "eval-source-map",
+    devtool: "source-map",
     watch: true,
     watchOptions: {
         aggregateTimeout: 300,
