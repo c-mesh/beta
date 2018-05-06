@@ -15,7 +15,9 @@ module.exports = {
         new webpack.optimize.UglifyJsPlugin({
             compressor: {
             warnings: false
-            }
+            },
+            
+            SourceMap: true
         }),
         new webpack.optimize.AggressiveMergingPlugin()
     ],

@@ -1,3 +1,5 @@
+import { SourceMap } from '../../.cache/typescript/2.6/node_modules/@types/uglify-js';
+
 var webpack = require('webpack');
 module.exports = {
     entry: "./app/app.jsx",
@@ -10,7 +12,9 @@ module.exports = {
         new webpack.optimize.UglifyJsPlugin({
             compressor: {
             warnings: false
-            }
+            },
+            
+            SourceMap: true
         }),
         new webpack.optimize.AggressiveMergingPlugin()
     ],
