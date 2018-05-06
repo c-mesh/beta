@@ -7,9 +7,9 @@ import { Button, Modal } from 'react-bootstrap';
 import moment from 'moment';
 
 class LocationInstructions extends React.Component {
-    constructor(props, myIp){
+    constructor(props){
         super(props);
-        this.myIp = myIp;
+        this.state = { ip: null };
     }
 
     browserName() {
@@ -71,26 +71,27 @@ class LocationInstructions extends React.Component {
         return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     }
     
-    getIp() {
+    componentWillMount() {
         return fetch('https://api.ipify.org?format=json')
         .then((resp) => resp.json())
         .then((response) => {
-            return this.myIp = response;
+            this.setState({ ip: response })
         }).catch(function (err) {
         })
     }
 
     locationErrorlogs() {
-        var payloadData = {};
         var browserName = this.browserName();
         var timestamp = moment().format('MMMM Do YYYY, h:mm:ss a')
-
-            payloadData.ip = this.myIp;
+        
+            var payloadData = {};
+            payloadData.ip = this.state.ip
             payloadData.deviceName = window.navigator.platform;
             payloadData.OS = navigator.userAgent;
             payloadData.browser = browserName;
             payloadData.timestamp = timestamp;
 
+            console.log('payload Error logs', payloadData);
             let apiURL = '/api/locationErrorLogs';
             fetch(apiURL, {
                 method: 'POST',
@@ -102,13 +103,15 @@ class LocationInstructions extends React.Component {
     }
     //locationErrorlogs()
     locationErrorUsers(){
-        var payloadData = {};
         var browserName = this.browserName();
         var timestamp = moment().format('MMMM Do YYYY, h:mm:ss a')
-
-            payloadData.ip = this.myIp
+            
+            var payloadData = {};
+            payloadData.ip = this.state.ip
             payloadData.firstVisit0n = timestamp;
             payloadData.status = 0;
+
+            console.log('payload location users error', payloadData);
 
             let apiURL = '/api/locationUserLogs';
             fetch(apiURL, {
@@ -125,10 +128,10 @@ class LocationInstructions extends React.Component {
     UpdateLocationErrorUsers(){
         var timestamp = moment().format('MMMM Do YYYY, h:mm:ss a')
         var payloadData = {};
-        payloadData.ip = this.myIp
+        payloadData.ip = this.state.ip
         payloadData.status = 1;
         payloadData.resolvedOn = timestamp;
-
+        console.log('payload update', payloadData);
         let apiURL = '/api/updateLocationUserLogs'
         fetch(apiURL, {
             method: 'PUT',
