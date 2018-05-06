@@ -10,7 +10,6 @@ var favicon = require('serve-favicon');
 var https = require('https');
 var cors = require('cors');
 var fs = require('fs');
-
 require('dotenv').config();
 mongoose.Promise = Promise;
 
@@ -41,10 +40,7 @@ var server = app.listen(port, function() {
         console.log('Listening on port %d', server.address().port);
 });
 
-
-
 //--Chaitanya Edits-- end
-
 
 // Server middle-wares
 app.use(express.static("public"));
@@ -616,7 +612,6 @@ app.post('/api/locationUserLogs', (req, res) => {
     })
 })
 
-
 // UPDATE LOCATION USER LOGS
 app.put('/api/updateLocationUserLogs', (req, res) => {
     let data = req.body;
@@ -655,7 +650,7 @@ app.get('/web', function(req, res){
     res.sendFile(path.join(__dirname+'/public/web.html'));
 });
 
-//Redirect
+// Redirect
 app.get('*', function(request, response) {
     console.log('Showing index page!');
     response.redirect('/');
