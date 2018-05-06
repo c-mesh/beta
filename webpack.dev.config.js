@@ -5,6 +5,14 @@ module.exports = {
         filename: "public/bundle.js",
         publicPath: "/"
     },
+    plugins: [
+        new webpack.optimize.OccurenceOrderPlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+            compressor: {
+            warnings: false
+            }
+        })
+    ],
     module: {
         loaders: [{
             test: /\.(js|jsx)$/,

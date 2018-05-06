@@ -10,6 +10,7 @@ var favicon = require('serve-favicon');
 var https = require('https');
 var cors = require('cors');
 var fs = require('fs');
+var CompressionPlugin = require('compression-webpack-plugin');
 require('dotenv').config();
 mongoose.Promise = Promise;
 
@@ -43,6 +44,13 @@ var server = app.listen(port, function() {
 
 
 //--Chaitanya Edits-- end
+//Reduce bundle time
+app.get('*.js', function (req, res, next) {
+    req.url = req.url + '.gz';
+    res.set('Content-Encoding', 'gzip');
+    next();
+});
+
 
 // Server middle-wares
 app.use(express.static("public"));

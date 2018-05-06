@@ -50,6 +50,7 @@
     "webpack": "^3.5.5"
   },
   "devDependencies": {
+    "compression-webpack-plugin": "^1.1.11",
     "webpack-dev-server": "^2.9.5"
   }
 }
