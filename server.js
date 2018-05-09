@@ -561,19 +561,10 @@ app.post('/api/meshLeaveOn',isAuthenticated, (req, res, next) => {
 
 // POST LOCATION ERROR LOGS
 app.post('/api/locationErrorLogs', (req, res) => {
-    let ip = req.body.ip;
-    let deviceName = req.body.deviceName;
-    let OS = req.body.OS;
-    let browser = req.body.browser;
-    let timestamp = req.body.timestamp;
-
-    LocationErrorLogs.create({
-        ip: ip,
-        deviceName: deviceName,
-        OS: OS,
-        browser: browser,
-        timestamp: timestamp
-    }).then(() => {
+    console.log('body', req.body);
+    const details = req.body;
+    let detailsData = JSON.parse(details)
+    LocationErrorLogs.create(detailsData).then(() => {
         res.send({
             "error": false,
             "statusCode": 200,
@@ -590,14 +581,13 @@ app.post('/api/locationErrorLogs', (req, res) => {
 
 // POST LOCATION USER LOGS
 app.post('/api/locationUserLogs', (req, res) => {
-    let ip = req.body.ip;
-    let status = req.body.status;
-    let firstVisitOn = req.body.firstVisitOn;
-    LocationUserLogs.create({
-        ip: ip,
-        status: status,
-        firstVisitOn: firstVisitOn
-    }).then(() => {
+    console.log('body', req.body);
+    let data = req.body;
+    let detailsData = JSON.parse(data);
+    // let ip = req.body.ip;
+    // let status = req.body.status;
+    // let firstVisitOn = req.body.firstVisitOn;
+    LocationUserLogs.create(detailsData).then(() => {
         res.send({
             "error": false,
             "statusCode": 200,
@@ -616,11 +606,8 @@ app.post('/api/locationUserLogs', (req, res) => {
 app.put('/api/updateLocationUserLogs', (req, res) => {
     let data = req.body;
     let query = { ip: data.ip }
-    LocationUserLogs.findOneAndUpdate(query, { $set: {
-        status: data.status,
-        resolvedOn: data.resolvedOn,
-        ip: data.ip
-    }}, { new: true })
+    let detailsData = JSON.parse(data);
+    LocationUserLogs.findOneAndUpdate(query, { $set: detailsData}, { new: true })
     .then(() => {
         res.send({
             "error": false,

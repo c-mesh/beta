@@ -207,4 +207,3 @@ class LocationInstructions extends React.Component {
 }
 
 export default withRouter(LocationInstructions);
-

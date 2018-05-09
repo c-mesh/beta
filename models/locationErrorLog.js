@@ -7,15 +7,19 @@ var LocationErrorLogSchema = new Schema({
     },
     deviceName: {
         type: String,
+        required: true
     },
     OS: {
-        type: String
+        type: String,
+        required: true
     },
     browser: {
-        type: String
+        type: String,
+        required: true
     },
     timestamp: {
-        type: String
+        type: String,
+        required: true
     }
 });
 
