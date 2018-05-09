@@ -85,7 +85,12 @@ class LocationInstructions extends React.Component {
         var timestamp = moment().format('MMMM Do YYYY, h:mm:ss a')
         
             var payloadData = {};
-            payloadData.ip = this.state.ip
+            if (this.state.ip === null){
+                return 
+            } else{
+                payloadData.ip = this.state.ip.ip
+            }
+            //payloadData.ip = this.state.ip
             payloadData.deviceName = window.navigator.platform;
             payloadData.OS = navigator.userAgent;
             payloadData.browser = browserName;
@@ -107,7 +112,12 @@ class LocationInstructions extends React.Component {
         var timestamp = moment().format('MMMM Do YYYY, h:mm:ss a')
             
             var payloadData = {};
-            payloadData.ip = this.state.ip
+            if (this.state.ip === null){
+                return 
+            } else{
+                payloadData.ip = this.state.ip.ip
+            }
+            
             payloadData.firstVisit0n = timestamp;
             payloadData.status = 0;
 
@@ -128,7 +138,12 @@ class LocationInstructions extends React.Component {
     UpdateLocationErrorUsers(){
         var timestamp = moment().format('MMMM Do YYYY, h:mm:ss a')
         var payloadData = {};
-        payloadData.ip = this.state.ip
+            if (this.state.ip === null){
+                return 
+            } else{
+                payloadData.ip = this.state.ip.ip
+            }
+        //payloadData.ip = this.state.ip
         payloadData.status = 1;
         payloadData.resolvedOn = timestamp;
         console.log('payload update', payloadData);
