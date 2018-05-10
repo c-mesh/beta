@@ -579,6 +579,7 @@ app.post('/api/locationErrorLogs', (req, res) => {
     })
 })
 
+
 // POST LOCATION USER LOGS
 app.post('/api/locationUserLogs', (req, res) => {
     console.log('body', req.body);
@@ -602,6 +603,7 @@ app.post('/api/locationUserLogs', (req, res) => {
     })
 })
 
+
 // UPDATE LOCATION USER LOGS
 app.put('/api/updateLocationUserLogs', (req, res) => {
     let data = req.body;
@@ -622,6 +624,8 @@ app.put('/api/updateLocationUserLogs', (req, res) => {
         })
     });
 });
+
+
 
 // GET /api/loggedin - Check if a user is authenticated
 app.get('/api/loggedin', (req, res) => {
