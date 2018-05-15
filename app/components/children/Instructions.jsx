@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import {withRouter} from "react-router-dom";
 import history from '../../history.js';
 import { Button, Modal } from 'react-bootstrap';
+import ContactUs from '../ContactUs.jsx';
 
 
 class Instructions extends React.Component {
@@ -140,7 +141,7 @@ class Instructions extends React.Component {
             <hr/>
             
                 <div className="contact-instruction">
-                    <p>contact us</p>
+                    {<ContactUs/>}
                 </div>
            </div>
         )

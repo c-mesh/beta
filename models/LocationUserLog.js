@@ -5,7 +5,7 @@ var LocationLogUserSchema = new Schema({
     ip: {
         type: String,
     },
-    firstVisitOn: {
+    firstVisit0n: {
         type: String,
     },
     resolvedOn: {
@@ -14,6 +14,10 @@ var LocationLogUserSchema = new Schema({
     status: {
         type: Number
     }
+});
+
+LocationLogUserSchema.static('findByIp', function(ip, callback){
+    return this.find({ ip: ip }, callback);
 });
 
 var LocationLogUser = mongoose.model("LocationLogUser", LocationLogUserSchema);

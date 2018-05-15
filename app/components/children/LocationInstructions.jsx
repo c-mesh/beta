@@ -5,11 +5,13 @@ import {withRouter} from "react-router-dom";
 import history from '../../history.js';
 import { Button, Modal } from 'react-bootstrap';
 import moment from 'moment';
+import ContactUs from '../ContactUs.jsx';
 
 class LocationInstructions extends React.Component {
     constructor(props){
         super(props);
         this.state = { ip: null };
+        this.UpdateLocationErrorUsers = this.UpdateLocationErrorUsers.bind(this);
     }
 
     browserName() {
@@ -70,6 +72,71 @@ class LocationInstructions extends React.Component {
     isIOS() {
         return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     }
+
+    browserVersion(){
+        var nVer = navigator.appVersion;
+        var nAgt = navigator.userAgent;
+        var browserName  = navigator.appName;
+        var fullVersion  = ''+parseFloat(navigator.appVersion); 
+        var majorVersion = parseInt(navigator.appVersion,10);
+        var nameOffset,verOffset,ix;
+
+        // In Opera 15+, the true version is after "OPR/" 
+        if ((verOffset=nAgt.indexOf("OPR/"))!=-1) {
+            browserName = "Opera";
+            return fullVersion = nAgt.substring(verOffset+4);
+        }
+        // In older Opera, the true version is after "Opera" or after "Version"
+        else if ((verOffset=nAgt.indexOf("Opera"))!=-1) {
+        browserName = "Opera";
+            return fullVersion = nAgt.substring(verOffset+6);
+        if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+            return fullVersion = nAgt.substring(verOffset+8);
+        }
+        // In MSIE, the true version is after "MSIE" in userAgent
+        else if ((verOffset=nAgt.indexOf("MSIE"))!=-1) {
+        browserName = "Microsoft Internet Explorer";
+            return fullVersion = nAgt.substring(verOffset+5);
+        }
+        // In Chrome, the true version is after "Chrome" 
+        else if ((verOffset=nAgt.indexOf("Chrome"))!=-1) {
+        browserName = "Chrome";
+            return fullVersion = nAgt.substring(verOffset+7);
+        }
+        // In Safari, the true version is after "Safari" or after "Version" 
+        else if ((verOffset=nAgt.indexOf("Safari"))!=-1) {
+            browserName = "Safari";
+            return fullVersion = nAgt.substring(verOffset+7);
+        if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+            return fullVersion = nAgt.substring(verOffset+8);
+        }
+        // In Firefox, the true version is after "Firefox" 
+        else if ((verOffset=nAgt.indexOf("Firefox"))!=-1) {
+            browserName = "Firefox";
+            return fullVersion = nAgt.substring(verOffset+8);
+        }
+        // In most other browsers, "name/version" is at the end of userAgent 
+        else if ( (nameOffset=nAgt.lastIndexOf(' ')+1) < 
+                (verOffset=nAgt.lastIndexOf('/')) ) 
+        {
+            browserName = nAgt.substring(nameOffset,verOffset);
+            return fullVersion = nAgt.substring(verOffset+1);
+        if (browserName.toLowerCase()==browserName.toUpperCase()) {
+            browserName = navigator.appName;
+        }
+        }
+        // trim the fullVersion string at semicolon/space if present
+        if ((ix=fullVersion.indexOf(";"))!=-1)
+            return fullVersion=fullVersion.substring(0,ix);
+        if ((ix=fullVersion.indexOf(" "))!=-1)
+            return fullVersion=fullVersion.substring(0,ix);
+
+        majorVersion = parseInt(''+fullVersion,10);
+        if (isNaN(majorVersion)) {
+            return fullVersion  = ''+parseFloat(navigator.appVersion); 
+            majorVersion = parseInt(navigator.appVersion,10);
+        }
+    }
     
     componentWillMount() {
         return fetch('https://api.ipify.org?format=json')
@@ -83,17 +150,16 @@ class LocationInstructions extends React.Component {
     locationErrorlogs() {
         var browserName = this.browserName();
         var timestamp = moment().format('MMMM Do YYYY, h:mm:ss a')
-        
+        var fullVersion = this.browserVersion();
             var payloadData = {};
             if (this.state.ip === null){
                 return 
             } else{
                 payloadData.ip = this.state.ip.ip
             }
-            //payloadData.ip = this.state.ip
             payloadData.deviceName = window.navigator.platform;
             payloadData.OS = navigator.userAgent;
-            payloadData.browser = browserName;
+            payloadData.browser = browserName + '' + fullVersion
             payloadData.timestamp = timestamp;
 
             console.log('payload Error logs', payloadData);
@@ -120,6 +186,7 @@ class LocationInstructions extends React.Component {
             
             payloadData.firstVisit0n = timestamp;
             payloadData.status = 0;
+            payloadData.resolvedOn = null;
 
             console.log('payload location users error', payloadData);
 
@@ -149,11 +216,12 @@ class LocationInstructions extends React.Component {
         console.log('payload update', payloadData);
         let apiURL = '/api/updateLocationUserLogs'
         fetch(apiURL, {
-            method: 'PUT',
+            method: 'POST',
             headers : new Headers(),
             body: JSON.stringify(payloadData)
         }).then((response) => {
         }).catch((err) => {
+            console.log('Error updating', err)
         })
     }
     renderLocationServiceMessage() {
@@ -198,15 +266,15 @@ class LocationInstructions extends React.Component {
 
                 <p/>
                 <div className="button-button">
-                    <Link to="mailto:team@circlemesh.com" className="btn-btn-one">Report Error</Link>
-                    <Link to="/" onClick={this.UpdateLocationErrorUsers()} className="btn-btn-two">Done</Link>
+                        <Link to={"mailto:team@circlemesh.com"} className="btn-btn-one">Report Error</Link>
+                        <Link to={"/"} onClick={() => {this.UpdateLocationErrorUsers()}} className="btn-btn-two">Done</Link>
                 </div>
 
                 <div className="hr-instr">
                     <hr/>
                 </div>
                     <div className="contact-instruction">
-                        <p>contact us</p>
+                        contact us
                     </div>
                 </div>
                     

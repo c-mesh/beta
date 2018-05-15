@@ -73,8 +73,6 @@ app.use(passport.session());
 var User = require('./models/User.js');
 var Mesh = require('./models/Mesh.js');
 var EventLog = require('./models/EventLog.js');
-var LocationErrorLogs = require('./models/locationErrorLog');
-var LocationUserLogs = require('./models/LocationUserLog');
 
 // Database logic
 mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true });
@@ -580,51 +578,98 @@ app.post('/api/locationErrorLogs', (req, res) => {
 })
 
 
+
 // POST LOCATION USER LOGS
 app.post('/api/locationUserLogs', (req, res) => {
-    console.log('body', req.body);
+    console.log('bodyUserlogs', req.body);
     let data = req.body;
+    console.log('resolved', data);
     let detailsData = JSON.parse(data);
+    LocationUserLogs.findByIp(detailsData.ip, function(err, data){
+        console.log('data of update', data);
+        if (data.length == 0){
+            LocationUserLogs.create(detailsData).then(() => {
+                res.send({
+                    "error": false,
+                    "statusCode": 200,
+                    "message": "location user logs saved successfully"
+                })
+            }).catch(() => {
+                res.send({
+                    "error": true,
+                    "statusCode": 404,
+                    "message": "unable to save user logs"
+                })
+            })
+        }
+        
+        if (data.length > 0){
+            let query = { ip: data[0].ip }
+            LocationUserLogs.findByIp(data.ip, function(err, data){
+                let query = { ip: data.ip }
+                console.log('query', query)
+                LocationUserLogs.findOneAndUpdate(query, { $set: detailsData}, { new: true })
+                .then(() => {
+                    res.send({
+                        "error": false,
+                        "statusCode": 200,
+                        "message": "updated location user logs saved successfully"
+                    })
+                }).catch(() => {
+                    res.send({
+                        "error": true,
+                        "statusCode": 404,
+                        "message": "unable to update user logs"
+                    })
+                });
+            });
+        }
+    });
     // let ip = req.body.ip;
     // let status = req.body.status;
     // let firstVisitOn = req.body.firstVisitOn;
-    LocationUserLogs.create(detailsData).then(() => {
-        res.send({
-            "error": false,
-            "statusCode": 200,
-            "message": "location user logs saved successfully"
-        })
-    }).catch(() => {
-        res.send({
-            "error": true,
-            "statusCode": 404,
-            "message": "unable to save user logs"
-        })
-    })
+
+
 })
 
 
-// UPDATE LOCATION USER LOGS
-app.put('/api/updateLocationUserLogs', (req, res) => {
-    let data = req.body;
-    let query = { ip: data.ip }
-    let detailsData = JSON.parse(data);
-    LocationUserLogs.findOneAndUpdate(query, { $set: detailsData}, { new: true })
-    .then(() => {
-        res.send({
-            "error": false,
-            "statusCode": 200,
-            "message": "updated location user logs saved successfully"
-        })
-    }).catch(() => {
-        res.send({
-            "error": true,
-            "statusCode": 404,
-            "message": "unable to update user logs"
-        })
-    });
-});
 
+// UPDATE LOCATION USER LOGS
+app.post('/api/updateLocationUserLogs', (req, res) => {
+    console.log('I am here to update, last last', req.body);
+    console.log('updateData', req.body)
+    let data = req.body;
+    
+    let detailsData = JSON.parse(data);
+    console.log('detailsData1',detailsData)
+    LocationUserLogs.findByIp(detailsData.ip, function(err, data){
+        console.log('returned data', data);
+        if (data.length > 0){
+            let query = { ip: data[0].ip }
+            console.log('query', query)
+            console.log('detailsData',detailsData)
+            LocationUserLogs.findOneAndUpdate(query, { $set: {
+                status: detailsData.status,
+                resolvedOn: detailsData.resolvedOn
+            }}, { new: true })
+            .then(() => {
+                res.send({
+                    "error": false,
+                    "statusCode": 200,
+                    "message": "updated location user logs saved successfully"
+                })
+            }).catch(() => {
+                res.send({
+                    "error": true,
+                    "statusCode": 404,
+                    "message": "unable to update user logs"
+                })
+            });
+        }
+    });
+
+
+});
 
 
 // GET /api/loggedin - Check if a user is authenticated
